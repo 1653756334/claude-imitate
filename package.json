@@ -1,0 +1,35 @@
+{
+  "name": "chat-2-sql-grapg",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.4.0",
+    "@ant-design/nextjs-registry": "^1.0.1",
+    "@formatjs/intl-localematcher": "^0.5.4",
+    "@types/negotiator": "^0.6.3",
+    "antd": "^5.20.6",
+    "negotiator": "^0.6.3",
+    "next": "14.2.9",
+    "react": "^18",
+    "react-dom": "^18",
+    "sass": "^1.78.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.9",
+    "postcss": "^8.4.45",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5"
+  }
+}

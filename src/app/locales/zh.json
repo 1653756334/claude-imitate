@@ -1,0 +1,11 @@
+{
+  "title": "聊天转图表",
+  "page": {
+    "title": "聊天转图表",
+    "desc": "搞懂 Next.js 实现 i18n 国际化多语言(基于App Router)"
+  },
+  "home": {
+    "title": "你好, Next.js i18n",
+    "desc": "这是一个 Next.js i18n 示例"
+  }
+}

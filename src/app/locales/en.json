@@ -1,0 +1,11 @@
+{
+  "title": "chat-to-graph",
+  "page": {
+    "title": "Next.js i18n Demo",
+    "desc": "How to implement i18n with Next.js (based on App Router)"
+  },
+  "home": {
+    "title": "Hello, Next.js i18n",
+    "desc": "This is a demo of Next.js i18n"
+  }
+}
