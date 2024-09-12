@@ -1,7 +1,7 @@
 "use client";
 import { BulbOutlined, PushpinOutlined } from "@ant-design/icons";
 import Link from "next/link";
-import { Playpen_Sans, Roboto_Mono} from "next/font/google"
+import { Playpen_Sans, Roboto_Mono } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
 
 const playpen_Sans = Playpen_Sans({
@@ -38,19 +38,28 @@ export default function Slider() {
   return (
     <div>
       <nav
-        className="z-20 h-screen max-md:pointer-events-none max-md:fixed max-md:inset-0 select-none"
+        className={`z-20 h-screen max-md:pointer-events-none max-md:fixed max-md:inset-0 select-none`}
         style={{ width: "4.5rem", height: "calc(100vh - 0.1rem)" }}
       >
         <div
-          className="p-3 border-2 rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100 to-orange-50 shadow-2xl shadow-orange-300 relative"
+          className={`p-3 border-2 rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100 to-orange-50 shadow-2xl shadow-orange-300 relatqive ease-in-out duration-300 ${
+            isExpanded ? "translate-x-0" : "-translate-x-full"
+          }`}
           style={{
-            width: "18rem",
+            width: isExpanded ? "18rem" : "4.5rem",
             height: "calc(100vh - 0.1rem)",
             marginTop: "0.1rem",
           }}
         >
-          <div className="w-18rem text-xl" style={{ width: "18rem" }}>
-            <Link href="/" className={playpen_Sans.className}>这里是Logo</Link>
+          <div
+            className={`w-18rem text-xl ${
+              isExpanded ? "translate-x-0" : "translate-x-20"
+            }`}
+            style={{ width: "18rem" }}
+          >
+            <Link href="/" className={playpen_Sans.className}>
+              这里是Logo
+            </Link>
           </div>
           <div
             className={`absolute top-3 right-3 cursor-pointer hover:bg-orange-200 rounded-md p-1 w-7 h-7 flex items-center justify-center`}
@@ -60,7 +69,10 @@ export default function Slider() {
               className={isPinned ? "text-orange-500 -rotate-45" : ""}
             />
           </div>
-          <div className={`mt-5 mb-5 cursor-pointer text-orange-700 ${roboto_Mono.className} hover:bg-gray-200 rounded-md p-1 -ml-1`} style={{fontSize: "1.07rem"}}>
+          <div
+            className={`mt-5 mb-5 cursor-pointer text-orange-700 ${roboto_Mono.className} hover:bg-gray-200 rounded-md p-1 -ml-1`}
+            style={{ fontSize: "1.07rem" }}
+          >
             <BulbOutlined />
             <span className="ml-1">开启新对话</span>
           </div>

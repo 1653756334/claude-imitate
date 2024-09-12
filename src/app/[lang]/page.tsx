@@ -1,4 +1,3 @@
-import styles from "./page.module.scss";
 import { getDictionary } from "./i18n";
 
 export default async function Home({

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { match } from "@formatjs/intl-localematcher";
 import Negotiator from 'negotiator';
 
-let locales = ["en", "zh"];
-let defaultLocale = "en";
+const locales = ["en", "zh"];
+const defaultLocale = "en";
 
 // Get the preferred locale, similar to the above or using a library
 function getLocale(request: NextRequest) {
@@ -25,7 +25,6 @@ export function middleware(request: NextRequest) {
 
   // Redirect if there is no locale
   let locale = getLocale(request);
-  if (!locales.includes(locale)) locale = "en"
   request.nextUrl.pathname = `/${locale}${pathname}`;
   // e.g. incoming request is /products
   // The new URL is now /en-US/products
