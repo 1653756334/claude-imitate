@@ -42,19 +42,18 @@ export default function Slider() {
         style={{ width: "4.5rem", height: "calc(100vh - 0.1rem)" }}
       >
         <div
-          className={`p-3 border-2 rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100 to-orange-50 shadow-2xl shadow-orange-300 relatqive ease-in-out duration-300 ${
-            isExpanded ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`p-3 border-2 relative rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100 to-orange-50 shadow-2xl shadow-orange-300 ease-in-out duration-300 ${
+            isExpanded ? "opacity-100" : "opacity-0"
+          } `}
           style={{
             width: isExpanded ? "18rem" : "4.5rem",
             height: "calc(100vh - 0.1rem)",
             marginTop: "0.1rem",
           }}
+          ref={sliderRef}
         >
           <div
-            className={`w-18rem text-xl ${
-              isExpanded ? "translate-x-0" : "translate-x-20"
-            }`}
+            className={`w-18rem text-xl !opacity-100`}
             style={{ width: "18rem" }}
           >
             <Link href="/" className={playpen_Sans.className}>
