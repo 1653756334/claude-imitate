@@ -1,11 +1,11 @@
 {
   "title": "聊天转图表",
-  "page": {
-    "title": "聊天转图表",
-    "desc": "搞懂 Next.js 实现 i18n 国际化多语言(基于App Router)"
-  },
-  "home": {
-    "title": "你好, Next.js i18n",
-    "desc": "这是一个 Next.js i18n 示例"
+  "slider": {
+    "logo": "对话-SQL-图表",
+    "new": "开启新对话",
+    "history": "对话历史",
+    "delete_one": "确认删除此对话？",
+    "delete_all": "确认删除所有对话？",
+    "avatar": "用户头像"
   }
 }

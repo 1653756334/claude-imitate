@@ -13,6 +13,7 @@
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.1",
     "@formatjs/intl-localematcher": "^0.5.4",
+    "@svgr/webpack": "^8.1.0",
     "@types/negotiator": "^0.6.3",
     "antd": "^5.20.6",
     "negotiator": "^0.6.3",
@@ -29,7 +30,6 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.9",
     "postcss": "^8.4.45",
-    "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.10",
     "typescript": "^5"
   }

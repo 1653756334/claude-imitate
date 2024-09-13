@@ -13,7 +13,7 @@ const config: Config = {
     extend: {scrollbar: ['rounded']},
   },
   plugins: [
-    require('tailwind-scrollbar')({ nocompatible: true }),
+    
   ],
 }
 export default config

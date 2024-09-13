@@ -1,7 +1,7 @@
 import React from "react";
 import "../globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import Slider from "../components/Slider";
+import SlideServer from "../components/SliderBar/SlideServer";
 
 import { getDictionary } from "@/app/[lang]/i18n";
 
@@ -24,8 +24,10 @@ export default async function I18nLayout({
       <body className="h-screen bg-gradient-to-l from-orange-100/80 to-orange-50/20">
         <AntdRegistry>
           <div className="flex flex-row">
-            <Slider />
-            {children}
+            <SlideServer lang={lang} />
+            <div className="flex-1">
+              {children}
+            </div>
           </div>
         </AntdRegistry>
       </body>
