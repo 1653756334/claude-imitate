@@ -8,7 +8,7 @@ export default async function Home({
   const t = await getDictionary(lang);
 
   return (
-    <div className='relative mx-auto flex h-full w-full max-w-3xl flex-1 flex-col md:px-2 bg-pink-100'>
+    <div className="relative mx-auto h-full w-full max-w-3xl flex-1 l md:px-2 bg-pink-100  px-4 pb-20 md:pl-8 lg:mt-6 min-h-screen-w-scroll !mt-0 flex flex-col items-center gap-8 pt-12 md:pr-14 2xl:pr-20">
       {t.home.title}
     </div>
   );
