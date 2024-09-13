@@ -1,9 +1,5 @@
 "use client";
-import {
-  AliwangwangOutlined,
-  ArrowRightOutlined,
-  BulbOutlined,
-} from "@ant-design/icons";
+import { ArrowRightOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
@@ -196,7 +192,7 @@ export default function Slider({ t }: Slider.SlideProps) {
               })}
             {/* 查看所有 */}
             <div className="flex h-5 mt-3 font-bold cursor-pointer hover:text-black/70">
-              <Link href={"/recents"} >
+              <Link href={"/recents"}>
                 <span>查看所有</span>{" "}
                 <span className="w-5 h-5 text-sm">
                   <ArrowRightOutlined />
