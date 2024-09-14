@@ -1,11 +1,18 @@
 {
   "title": "聊天转图表",
   "slider": {
-    "logo": "对话-SQL-图表",
+    "logo": "克劳德AI",
     "new": "开启新对话",
     "history": "对话历史",
     "delete_one": "确认删除此对话？",
     "delete_all": "确认删除所有对话？",
-    "avatar": "用户头像"
+    "avatar": "用户头像",
+    "show_all": "显示所有",
+    "help": "帮助和支持"
+  },
+  "recents": {
+    "title": "历史记录",
+    "search": "搜索对话...",
+    "new": "新对话"
   }
 }

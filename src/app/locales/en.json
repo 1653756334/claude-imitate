@@ -1,11 +1,18 @@
 {
-  "title": "chat-to-graph",
+  "title": "chat2graph",
   "slider": {
-    "logo": "Chat-SQL-Graph",
+    "logo": "Dlaude",
     "new": "New Chat",
     "history": "Chat History",
     "delete_one": "Confirm delete this chat?",
     "delete_all": "Confirm delete all chats?",
-    "avatar": "User Avatar"
+    "avatar": "User Avatar",
+    "help": "Help and Support",
+    "show_all": "Show All"
+  },
+  "recents": {
+    "title": "Recents",
+    "search": "Search Conversations...",
+    "new": "New Conversation"
   }
 }

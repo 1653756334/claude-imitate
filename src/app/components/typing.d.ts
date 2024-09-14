@@ -3,10 +3,10 @@ declare namespace Slider {
 		lang: Global.SupportedLang;
 	}
 	interface SlideProps {
-		t: any;
+		t: Global.Dictionary;
 	}
 	interface HistoryData {
-		id: number;
+		id: string;
 		title: string;
 	}
 	

@@ -1,12 +1,9 @@
 "use client";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, DownOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
-
-import VerticalAlignTopOutlined from "@/assets/svgs/VerticalAlignBottomOutlined.svg";
-import ChatAdd from "@/assets/svgs/ChatAdd.svg";
-import Chat from "@/assets/svgs/Chat.svg";
+import { IconProvider } from "../IconProvider";
 
 const playpen_Sans = Jacques_Francois({
   subsets: ["latin"],
@@ -15,51 +12,51 @@ const playpen_Sans = Jacques_Francois({
 
 const history = [
   {
-    id: 1,
+    id: "1",
     title: "如何使用人工智能优化工作流程vwbvwrjnvewkhvuiew",
   },
   {
-    id: 2,
+    id: "2",
     title: "机器学习在金融领域的应用",
   },
   {
-    id: 3,
+    id: "3",
     title: "深度学习模型训练技巧",
   },
   {
-    id: 4,
+    id: "4",
     title: "自然语言处理在客户服务中的运用",
   },
   {
-    id: 5,
+    id: "5",
     title: "计算机视觉技术在安防系统中的应用",
   },
   {
-    id: 6,
+    id: "6",
     title: "区块链技术如何改变供应链管理",
   },
   {
-    id: 7,
+    id: "7",
     title: "大数据分析在市场营销中的作用",
   },
   {
-    id: 8,
+    id: "8",
     title: "物联网设备的安全性问题及解决方案",
   },
   {
-    id: 9,
+    id: "9",
     title: "云计算技术在企业中的实施策略",
   },
   {
-    id: 10,
+    id: "10",
     title: "人工智能伦理问题探讨",
   },
   {
-    id: 11,
+    id: "11",
     title: "5G技术对智能城市建设的影响",
   },
   {
-    id: 12,
+    id: "12",
     title: "量子计算机的发展现状与未来展望",
   },
 ];
@@ -109,7 +106,7 @@ export default function Slider({ t }: Slider.SlideProps) {
 
   return (
     <div
-      className="ease-in-out duration-200 hidden lg:block"
+      className="ease-in-out duration-200 hidden md:block"
       style={{ width: isPinned ? "18rem" : "4.5rem" }}
     >
       <nav
@@ -133,7 +130,7 @@ export default function Slider({ t }: Slider.SlideProps) {
             }`}
             onClick={handleSpin}
           >
-            <VerticalAlignTopOutlined
+            <IconProvider.VerticalAlignBottomOutlined
               className={` ${
                 isPinned ? "text-orange-500 rotate-90" : "-rotate-90"
               }`}
@@ -141,7 +138,7 @@ export default function Slider({ t }: Slider.SlideProps) {
           </div>
         </div>
         <div
-          className={`p-3 border-2 relative rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-200 ${
+          className={`p-3 pb-1 border-2 relative rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-200 ${
             isExpanded || isPinned
               ? "translate-x-0 opacity-100"
               : "-translate-x-full opacity-0"
@@ -165,53 +162,82 @@ export default function Slider({ t }: Slider.SlideProps) {
             className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-gray-200/60 rounded-md p-1 flex items-center`}
             style={{ fontSize: "1.07rem" }}
           >
-            <ChatAdd width={20} height={20} className="-rotate-90" />
+            <IconProvider.ChatAdd width={20} height={20} className="-rotate-90" />
             <span className="ml-1">{t.slider.new}</span>
           </div>
-          {/* 对话历史 */}
-          <div className="font-bold mb-3 relative group">
-            <span>{t.slider.history}</span>
-          </div>
-          <div
-            className="flex flex-col text-sm overflow-y-auto scrollbar"
-            style={{ height: "calc(100vh - 12.5rem)" }}
-          >
-            {historyData &&
-              historyData.map((item) => {
-                return (
-                  <div
-                    className="hover:bg-gray-200 rounded-md p-1 cursor-pointer flex items-center relative group"
-                    key={item.id}
-                  >
-                    <Chat width={20} height={20} />
-                    <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
-                      {item.title}
+          {/* 从这里开始对话历史到底部 */}
+          <div className="flex flex-col gap-2">
+            <div>
+              {/* 对话历史 */}
+              <div className="font-bold mb-3 relative group">
+                <span>{t.slider.history}</span>
+              </div>
+              <div
+                className="flex flex-col text-sm overflow-y-auto scrollbar"
+                style={{ height: "calc(100vh - 15rem)" }}
+              >
+                {historyData &&
+                  historyData.map((item) => {
+                    return (
+                      <div
+                        className="hover:bg-gray-200 rounded-md p-1 cursor-pointer flex items-center relative group"
+                        key={item.id}
+                      >
+                        <IconProvider.Chat width={20} height={20} />
+                        <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
+                          {item.title}
+                        </span>
+                      </div>
+                    );
+                  })}
+                {/* 查看所有 */}
+                <Link href={"/recents"} className="gap-1 mt-3">
+                  <div className="flex h-5 font-bold cursor-pointer hover:text-black/70">
+                    <span>{t.slider.show_all}</span>
+                    <span className="w-5 h-5 text-sm flex items-center justify-center text-gray-500">
+                      <ArrowRightOutlined className="scale-90" />
                     </span>
                   </div>
-                );
-              })}
-            {/* 查看所有 */}
-            <div className="flex h-5 mt-3 font-bold cursor-pointer hover:text-black/70">
-              <Link href={"/recents"}>
-                <span>查看所有</span>{" "}
-                <span className="w-5 h-5 text-sm">
-                  <ArrowRightOutlined />
+                </Link>
+              </div>
+            </div>
+            {/* 底部区域 */}
+            <div className="h-20 flex flex-col justify-between">
+              {/* 用户信息 */}
+              <div
+                className={`flex items-center justify-between gap-2 p-1 pl-2 pr-2 rounded-md h-10
+            cursor-pointer border border-gray-300/50 hover:border-gray-300
+            bg-gradient-to-b from-orange-50 via-orange-100/70 to-orange-50
+            shadow-sm hover:shadow-sm transition-all duration-200`}
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden`}
+                >
+                  <img
+                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
+                    alt={t.slider.avatar}
+                    className="object-cover"
+                  />
+                </div>
+                <div className="h-10 flex-1 leading-10 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
+                  rhueive@gmail.com
+                </div>
+                <div className="text-xs flex items-center justify-center scale-75">
+                  <DownOutlined />
+                </div>
+              </div>
+              {/* 设置 */}
+              <div className="p-1 pl-2 pr-2 flex justify-between items-center">
+                <span>
+                  <IconProvider.AI />
                 </span>
-              </Link>
-            </div>
-          </div>
-
-          {/* 用户信息 */}
-          <div className="flex items-center justify-between gap-2 pt-1 pb-1 hover:bg-gray-200/60 rounded-md p-1  cursor-pointer">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
-              <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
-                alt={t.slider.avatar}
-                className="object-cover"
-              />
-            </div>
-            <div className="h-10 flex-1 leading-10 mr-2 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
-              rhueive@gmail.com
+                <div className="flex ver">
+                  <IconProvider.Problem />
+                  <span className="text-xs hover:underline cursor-pointer">
+                    {t.slider.help}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

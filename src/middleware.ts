@@ -23,16 +23,6 @@ export function middleware(request: NextRequest) {
 
   const locale = getLocale(request);
 
-  // if (locale === "zh") {
-  //   if (pathnameHasLocale && pathname.startsWith("/zh/")) {
-  //     // 如果路径以 /zh/ 开头，去掉 /zh 前缀
-  //     const newPathname = pathname.replace(/^\/zh/, '');
-  //     return NextResponse.rewrite(new URL(newPathname, request.url));
-  //   }
-  //   // 对于中文，直接访问请求的路径
-  //   return NextResponse.rewrite(new URL(pathname, request.url));
-  // }
-
   // 对于其他语言，如果路径没有语言前缀，则添加
   if (!pathnameHasLocale) {
     request.nextUrl.pathname = `/${locale}${pathname}`;
