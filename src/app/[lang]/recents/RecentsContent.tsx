@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 
 import { IconProvider } from "@/app/components/IconProvider";
+import Comfirm from "@/app/components/Comfirm";
 
 const history = [
   {
@@ -64,6 +65,7 @@ const history = [
 export default function RecentsContent({ t }: Recents.RecentsContentProps) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [historyData, setHistoryData] = useState<Slider.HistoryData[]>([]);
+  const [comfirmVisible, setComfirmVisible] = useState(false);
 
   useEffect(() => {
     setHistoryData(history);
@@ -81,6 +83,10 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
     }
   };
 
+  const handleMultiDelete = () => {
+    setSelectedItems([]);
+  };
+
   return (
     <div className="min-h-full w-full min-w-0 flex-1 text-gray-800/90 h-screen overflow-y-auto scrollbar">
       <header
@@ -93,7 +99,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
           <div className="tracking-wider">{t.recents.title}</div>
         </h1>
         <Link
-          href={"/new"}
+          href={"/"}
           className="flex items-center gap-2 py-1 px-2 rounded-md bg-orange-700/80 font-bold tracking-wider text-white cursor-pointer select-none hover:bg-orange-700/90"
         >
           <div>
@@ -106,7 +112,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
         {/* 搜索框 */}
         <div
           className={`flex items-center w-full h-10 rounded-xl border border-gray-300 bg-white/70 hover:bg-white/90
-      hover:border-gray-400 focus-within:border-blue-400`}
+                    hover:border-gray-400 focus-within:border-blue-400`}
         >
           <div className="flex items-center gap-2 px-2">
             <SearchOutlined className="text-gray-500" />
@@ -117,7 +123,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
           />
         </div>
         {/* 选择区域 */}
-        <div className="text-sm flex mt-2 items-center gap-2 h-12">
+        <div className="text-sm flex my-2 items-center gap-2 h-12">
           {selectedItems.length == 0 ? (
             <div className="flex items-center gap-2">
               <div>你有 {historyData.length} 条历史对话记录 </div>
@@ -136,11 +142,32 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
             </div>
           ) : (
             <div className="flex items-center justify-between w-full">
-              <div className="font-bold text-blue-400">{selectedItems.length} 个对话已选择</div>
-              <div className="flex items-center gap-2">
-                <div className="cursor-pointer text-blue-400">全选</div>
-                <div className="cursor-pointer bg-gray-300/80 rounded-md px-2 py-1 hover:bg-gray-300 border border-gray-300">取消</div>
-                <div className="cursor-pointer text-white bg-orange-700/80 rounded-md px-2 py-1 hover:bg-orange-700/90">删除选中</div>
+              <div className="font-bold text-blue-400">
+                {selectedItems.length} 个对话已选择
+              </div>
+              <div className="flex items-center gap-3">
+                <div
+                  className="cursor-pointer text-blue-400"
+                  onClick={() => {
+                    setSelectedItems(historyData.map((item) => item.id));
+                  }}
+                >
+                  全选
+                </div>
+                <div
+                  className="cursor-pointer bg-gray-300/80 rounded-md px-2 py-1 hover:bg-gray-300 border border-gray-300"
+                  onClick={() => {
+                    setSelectedItems([]);
+                  }}
+                >
+                  取消
+                </div>
+                <div
+                  className="cursor-pointer text-white bg-orange-700/80 rounded-md px-2 py-1 hover:bg-orange-700/90"
+                  onClick={handleMultiDelete}
+                >
+                  删除选中
+                </div>
               </div>
             </div>
           )}
@@ -173,7 +200,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                     ${
                       selectedItems.length != 0 &&
                       selectedItems.includes(item.id)
-                        ? "bg-blue-500"
+                        ? "!bg-blue-500"
                         : ""
                     }
                     ${selectedItems.length == 0 ? "opacity-0" : "opacity-100"}`}
@@ -193,6 +220,9 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                     selectedItems.length == 0 ? "" : "opacity-0"
                   }`}
                   title="删除"
+                  onClick={() => {
+                    setComfirmVisible(true);
+                  }}
                 >
                   <DeleteOutlined />
                 </div>
@@ -203,6 +233,18 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
           )}
         </ul>
       </main>
+      <Comfirm
+        title="删除历史记录?"
+        content="确定要删除这条历史记录吗?"
+        onCancel={() => {
+          setComfirmVisible(false);
+        }}
+        onConfirm={() => {
+          setComfirmVisible(false);
+        }}
+        visible={comfirmVisible}
+        t={t}
+      />
     </div>
   );
 }

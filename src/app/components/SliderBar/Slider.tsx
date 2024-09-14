@@ -243,7 +243,7 @@ export default function Slider({ t }: Slider.SlideProps) {
         </div>
         <div
           className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden absolute bottom-3 right-3 transition-all duration-200 ${
-            isExpanded ? "opacity-0 translate-x-2" : "opacity-100 translate-x-0"
+            isExpanded || isPinned ? "opacity-0 translate-x-2" : "opacity-100 translate-x-0"
           }`}
         >
           <img

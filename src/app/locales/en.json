@@ -14,5 +14,9 @@
     "title": "Recents",
     "search": "Search Conversations...",
     "new": "New Conversation"
+  },
+  "confirm": {
+    "yes": "Confirm",
+    "no": "Cancel"
   }
 }

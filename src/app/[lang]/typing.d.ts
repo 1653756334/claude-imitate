@@ -8,6 +8,9 @@ declare namespace Global {
     recents: {
       [key: string]: string;
     };
+    confirm: {
+      [key: string]: string;
+    };
   }
 }
 
