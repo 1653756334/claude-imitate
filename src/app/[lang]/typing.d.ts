@@ -11,6 +11,9 @@ declare namespace Global {
     confirm: {
       [key: string]: string;
     };
+    new: {
+      [key: string]: string;
+    };
   }
 }
 

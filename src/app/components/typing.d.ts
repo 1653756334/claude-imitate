@@ -34,3 +34,13 @@ declare namespace DropDown {
     width?: string;
   }
 }
+
+declare namespace HintText {
+  interface HintTextProps {
+    children: React.ReactNode;
+    className?: string;
+    hintText: string;
+    more?: number;
+    position?: "top" | "bottom";
+  }
+}

@@ -26,7 +26,7 @@ const DropdownMenu: React.FC<DropDown.DropdownMenuProps> = ({ buttonText, items,
         ...itemsRef.current.map((item) => item?.offsetWidth || 0),
         // dropdownRef.current?.querySelector('button')?.offsetWidth || 0
       );
-      setMenuWidth(maxWidth);
+      setMenuWidth(maxWidth+6);
     }
   }, [isOpen, items]);
 
@@ -57,7 +57,7 @@ const DropdownMenu: React.FC<DropDown.DropdownMenuProps> = ({ buttonText, items,
 
       {isOpen && (
         <div
-          className="origin-top-left absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+          className="origin-top-left absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-gray-300/60"
           style={{ width: menuWidth ? `${menuWidth}px` : 'auto' }}
         >
           <div

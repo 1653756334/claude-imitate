@@ -5,6 +5,6 @@ export default async function New({ lang }: { lang: Global.SupportedLang }) {
   const t = await getDictionary(lang);
 
   return (
-    <NewContent />
+    <NewContent t={t}/>
   );
 }

@@ -18,5 +18,8 @@
   "confirm": {
     "yes": "Confirm",
     "no": "Cancel"
+  },
+  "new": {
+    "welcome": "Welcome"
   }
 }
