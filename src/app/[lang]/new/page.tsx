@@ -1,10 +1,8 @@
-import { getDictionary } from "../i18n";
-import NewContent from "./NewContent";
+import NewServer from "@/app/components/New/NewServer";
 
-export default async function New({ lang }: { lang: Global.SupportedLang }) {
-  const t = await getDictionary(lang);
+export default async function New({ params: { lang } }: { params: { lang: Global.SupportedLang } }) {
 
   return (
-    <NewContent t={t}/>
+    <NewServer lang={lang}/>
   );
 }

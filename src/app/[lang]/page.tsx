@@ -1,9 +1,9 @@
-import New from "./new/page";
+import NewServer from "@/app/components/New/NewServer";
 
 export default async function Home({
   params: { lang },
 }: {
   params: { lang: Global.SupportedLang };
 }) {
-  return <New lang={lang} />;
+  return <NewServer lang={lang} />;
 }
