@@ -14,7 +14,7 @@ import Comfirm from "@/app/components/Comfirm";
 const history = [
   {
     id: "1",
-    title: "如何使用人工智能优化工作流程vwbvwrjnvewkhvuiew",
+    title: "如何使用人工智能优化工作流程vwbvwrjnvewkhvuinrejibnrebnrejknrbejkew",
   },
   {
     id: "2",
@@ -88,9 +88,9 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
   };
 
   return (
-    <div className="min-h-full w-full min-w-0 flex-1 text-gray-800/90 h-screen overflow-y-auto scrollbar">
+    <div className="min-h-full w-full min-w-0 flex-1 text-gray-800/90 h-screen overflow-y-auto scrollbar max-md:pl-3">
       <header
-        className={`flex h-12 w-full items-center justify-between gap-4 pr-3 pt-0.5 md:pl-8 lg:pl-12`}
+        className={`flex h-12 w-full items-center md:justify-between max-md:justify-center gap-4 pr-3 pt-0.5 md:pl-8 lg:pl-12`}
       >
         <h1 className="flex items-center gap-2 font-bold">
           <div className="">
@@ -179,15 +179,17 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
               <li className="list-none relative group" key={item.id}>
                 <Link href={`/chat/${item.id}`}>
                   <div
-                    className={`flex group relative gap-2 p-4 pl-5 flex-col justify-between h-20 rounded-xl hover:bg-white/60 border border-gray-300 shadow-sm
+                    className={`flex group relative gap-2 p-4 pl-5 flex-col justify-between h-20 rounded-xl hover:bg-white/60 border border-gray-300 shadow-sm 
+                      
                     ${
                       selectedItems.length != 0 &&
                       selectedItems.includes(item.id)
                         ? "border-blue-300 bg-blue-300/20"
                         : ""
                     }`}
+                    style={{ maxWidth: "calc(100vw - 1.5rem)" }}
                   >
-                    <div>{item.title}</div>
+                    <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap">{item.title}</div>
                     <div className="text-xs gap-2 flex items-center">
                       <span className="scale-95">上一条记录</span>
                       <span>17小时前</span>

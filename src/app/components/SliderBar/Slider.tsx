@@ -71,11 +71,15 @@ export default function Slider({ t }: Slider.SlideProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isPinned) return;
-      if (e.clientX <= 50 || titleRef.current?.contains(e.target as Node)) {
+      if (
+        titleRef.current?.contains(e.target as Node) ||
+        navRef.current?.contains(e.target as Node)
+      ) {
         setIsExpanded(true);
       } else if (
         !sliderRef.current?.contains(e.target as Node) &&
@@ -105,154 +109,181 @@ export default function Slider({ t }: Slider.SlideProps) {
   };
 
   return (
-    <div
-      className="ease-in-out duration-200 hidden md:block"
-      style={{ width: isPinned ? "18rem" : "4.5rem" }}
-    >
-      <nav
-        className={`z-20 h-screen max-md:fixed max-md:inset-0 select-none relative`}
-        style={{ width: "4.5rem", height: "calc(100vh - 0.1rem)" }}
+    <>
+      {/* 当屏幕太小时候显示 */}
+      <div
+        className={`w-18rem text-xl h-5 fixed top-3 left-3 z-30 transition-none sm:hidden transition-all duration-100
+        ${isExpanded || isPinned ? "opacity-0" : "opacity-100"}`}
+        onClick={() => {
+          setIsExpanded(true);
+        }}
       >
-        <div
-          className={`w-18rem text-xl !opacity-100 fixed z-30 top-3 left-3 flex items-center justify-between`}
-          style={{ width: "calc(18rem - 1.5rem)" }}
-          ref={logoRef}
+        <IconProvider.Drawer />
+      </div>
+
+      <div
+        className={`ease-in-out duration-200 relative z-20 transition-all ${
+          isExpanded || isPinned
+            ? "max-sm:translate-x-0 max-sm:left-0"
+            : "max-sm:-translate-x-full max-sm:-left-1/2 max-sm:hidden"
+        }`}
+        style={{ width: isPinned ? "18rem" : "4.5rem" }}
+      >
+        <nav
+          className={`z-20 h-screen max-sm:relative max-sm:inset-0 select-none relative `}
+          style={{ width: "4.5rem", height: "calc(100vh - 0.1rem)" }}
+          ref={navRef}
         >
-          <Link href="/" className={`${playpen_Sans.className} font-bold`}>
-            <span ref={titleRef}>{t.slider.logo}</span>
-          </Link>
-          {/* 固定 */}
           <div
-            className={` cursor-pointer hover:bg-orange-200 rounded-md p-1 w-6 h-6 text-sm flex items-center justify-center transition-all duration-200 ${
-              isExpanded || isPinned
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 pointer-events-none -translate-x-full"
-            }`}
-            onClick={handleSpin}
+            className={`w-18rem text-xl !opacity-100 fixed z-30 top-3 left-3 flex items-center justify-between`}
+            style={{ width: "calc(18rem - 1.5rem)" }}
+            ref={logoRef}
           >
-            <IconProvider.VerticalAlignBottomOutlined
-              className={` ${
-                isPinned ? "text-orange-500 rotate-90" : "-rotate-90"
+            <Link href="/" className={`${playpen_Sans.className} font-bold`}>
+              <span ref={titleRef}>{t.slider.logo}</span>
+            </Link>
+            {/* 固定 */}
+            <div
+              className={` cursor-pointer hover:bg-orange-200 rounded-md p-1 w-6 h-6 text-sm flex items-center justify-center transition-all duration-200 ${
+                isExpanded || isPinned
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 pointer-events-none -translate-x-full"
               }`}
-            />
-          </div>
-        </div>
-        <div
-          className={`p-3 pb-1 border-2 relative rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-200 ${
-            isExpanded || isPinned
-              ? "translate-x-0 opacity-100"
-              : "-translate-x-full opacity-0"
-          } ${
-            isPinned ? "rounded-r-none shadow-none" : "rounded-lg "
-          } z-20 backdrop-blur-md`}
-          style={{
-            width: "18rem",
-            height: isPinned ? "100vh" : "calc(100vh - 0.1rem)",
-            marginTop: isPinned ? "0" : "0.1rem",
-          }}
-          ref={sliderRef}
-        >
-          {/* 这是一个单纯的占位符 */}
-          <div
-            className={`w-18rem text-xl !opacity-100 pointer-events-none h-5`}
-            style={{ width: "18rem" }}
-          ></div>
-          {/* 新对话区域 */}
-          <div
-            className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-gray-200/60 rounded-md p-1 flex items-center`}
-            style={{ fontSize: "1.07rem" }}
-          >
-            <IconProvider.ChatAdd width={20} height={20} className="-rotate-90" />
-            <span className="ml-1">{t.slider.new}</span>
-          </div>
-          {/* 从这里开始对话历史到底部 */}
-          <div className="flex flex-col gap-2">
-            <div>
-              {/* 对话历史 */}
-              <div className="font-bold mb-3 relative group">
-                <span>{t.slider.history}</span>
-              </div>
-              <div
-                className="flex flex-col text-sm overflow-y-auto scrollbar"
-                style={{ height: "calc(100vh - 15rem)" }}
-              >
-                {historyData &&
-                  historyData.map((item) => {
-                    return (
-                      <div
-                        className="hover:bg-gray-200 rounded-md p-1 cursor-pointer flex items-center relative group"
-                        key={item.id}
-                      >
-                        <IconProvider.Chat width={20} height={20} />
-                        <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
-                          {item.title}
-                        </span>
-                      </div>
-                    );
-                  })}
-                {/* 查看所有 */}
-                <Link href={"/recents"} className="gap-1 mt-3">
-                  <div className="flex h-5 font-bold cursor-pointer hover:text-black/70">
-                    <span>{t.slider.show_all}</span>
-                    <span className="w-5 h-5 text-sm flex items-center justify-center text-gray-500">
-                      <ArrowRightOutlined className="scale-90" />
-                    </span>
-                  </div>
-                </Link>
-              </div>
+              onClick={handleSpin}
+            >
+              <IconProvider.VerticalAlignBottomOutlined
+                className={` ${
+                  isPinned ? "text-orange-500 rotate-90" : "-rotate-90"
+                }`}
+              />
             </div>
-            {/* 底部区域 */}
-            <div className="h-20 flex flex-col justify-between">
-              {/* 用户信息 */}
-              <div
-                className={`flex items-center justify-between gap-2 p-1 pl-2 pr-2 rounded-md h-10
+          </div>
+          <div
+            className={`p-3 pb-1 border-2 relative rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-100 ${
+              isExpanded || isPinned
+                ? "translate-x-0 opacity-100"
+                : "-translate-x-full opacity-0"
+            } ${
+              isPinned ? "rounded-r-none shadow-none" : "rounded-lg "
+            } z-20 backdrop-blur-md`}
+            style={{
+              width: "18rem",
+              height: isPinned ? "100vh" : "calc(100vh - 0.1rem)",
+              marginTop: isPinned ? "0" : "0.1rem",
+            }}
+            ref={sliderRef}
+          >
+            {/* 这是一个单纯的占位符 */}
+            <div
+              className={`w-18rem text-xl !opacity-100 pointer-events-none h-5`}
+              style={{ width: "18rem" }}
+            ></div>
+            {/* 新对话区域 */}
+            <div
+              className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-gray-200/60 rounded-md p-1 flex items-center`}
+              style={{ fontSize: "1.07rem" }}
+            >
+              <IconProvider.ChatAdd
+                width={20}
+                height={20}
+                className="-rotate-90"
+              />
+              <span className="ml-1">{t.slider.new}</span>
+            </div>
+            {/* 从这里开始对话历史到底部 */}
+            <div className="flex flex-col gap-2">
+              <div>
+                {/* 对话历史 */}
+                <div className="font-bold mb-3 relative group">
+                  <span>{t.slider.history}</span>
+                </div>
+                <div
+                  className="flex flex-col text-sm overflow-y-auto scrollbar"
+                  style={{ height: "calc(100vh - 15rem)" }}
+                >
+                  {historyData &&
+                    historyData.map((item) => {
+                      return (
+                        <div
+                          className="hover:bg-gray-200 rounded-md p-1 cursor-pointer flex items-center relative group"
+                          key={item.id}
+                        >
+                          <IconProvider.Chat width={20} height={20} />
+                          <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
+                            {item.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  {/* 查看所有 */}
+                  <Link href={"/recents"} className="gap-1 mt-3">
+                    <div className="flex h-5 font-bold cursor-pointer hover:text-black/70">
+                      <span>{t.slider.show_all}</span>
+                      <span className="w-5 h-5 text-sm flex items-center justify-center text-gray-500">
+                        <ArrowRightOutlined className="scale-90" />
+                      </span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
+              {/* 底部区域 */}
+              <div className="h-20 flex flex-col justify-between">
+                {/* 用户信息 */}
+                <div
+                  className={`flex items-center justify-between gap-2 p-1 pl-2 pr-2 rounded-md h-10
             cursor-pointer border border-gray-300/50 hover:border-gray-300
             bg-gradient-to-b from-orange-50 via-orange-100/70 to-orange-50
             shadow-sm hover:shadow-sm transition-all duration-200`}
-              >
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden`}
                 >
-                  <img
-                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
-                    alt={t.slider.avatar}
-                    className="object-cover"
-                  />
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden`}
+                  >
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
+                      alt={t.slider.avatar}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="h-10 flex-1 leading-10 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
+                    rhueive@gmail.com
+                  </div>
+                  <div className="text-xs flex items-center justify-center scale-75">
+                    <DownOutlined />
+                  </div>
                 </div>
-                <div className="h-10 flex-1 leading-10 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
-                  rhueive@gmail.com
-                </div>
-                <div className="text-xs flex items-center justify-center scale-75">
-                  <DownOutlined />
-                </div>
-              </div>
-              {/* 设置 */}
-              <div className="p-1 pl-2 pr-2 flex justify-between items-center">
-                <span>
-                  <IconProvider.AI />
-                </span>
-                <div className="flex ver">
-                  <IconProvider.Problem />
-                  <span className="text-xs hover:underline cursor-pointer">
-                    {t.slider.help}
+                {/* 设置 */}
+                <div className="p-1 pl-2 pr-2 flex justify-between items-center">
+                  <span>
+                    <IconProvider.AI />
                   </span>
+                  <div className="flex ver">
+                    <IconProvider.Problem />
+                    <span className="text-xs hover:underline cursor-pointer">
+                      {t.slider.help}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden absolute bottom-3 right-3 transition-all duration-200 ${
-            isExpanded || isPinned ? "opacity-0 translate-x-2" : "opacity-100 translate-x-0"
-          }`}
-        >
-          <img
-            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
-            alt={t.slider.avatar}
-            className="object-cover"
-          />
-        </div>
-      </nav>
-    </div>
+          <div
+            className={`w-8 h-16 rounded-full flex flex-col justify-between items-center overflow-hidden absolute bottom-3 left-3 transition-all duration-200 ${
+              isExpanded || isPinned
+                ? "opacity-0 translate-x-2"
+                : "opacity-100 translate-x-0"
+            }`}
+          >
+            <div className="border rounded-full overflow-hidden p-1">
+              <img
+                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
+                alt={t.slider.avatar}
+                className="object-cover"
+              />
+            </div>
+            <IconProvider.Drawer />
+          </div>
+        </nav>
+      </div>
+    </>
   );
 }

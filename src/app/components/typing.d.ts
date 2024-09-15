@@ -21,3 +21,16 @@ declare namespace Comfirm {
     visible: boolean;
   }
 }
+
+declare namespace DropDown {
+  interface DropdownItem {
+    label: string;
+  }
+  
+  interface DropdownMenuProps {
+    buttonText: string;
+    callback: (item: DropdownItem) => void;
+    items: DropdownItem[];
+    width?: string;
+  }
+}
