@@ -11,7 +11,7 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
             <CommentOutlined />
           </div>
           <div className="py-1 px-2 flex items-center gap-1 cursor-pointer rounded-lg hover:bg-amber-900/10">
-            这里是标题 <DownOutlined className="text-sm" />
+            {t.title} <DownOutlined className="text-sm" />
           </div>
         </div>
       </header>
