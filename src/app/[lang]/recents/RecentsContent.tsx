@@ -241,8 +241,8 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
         </div>
       </main>
       <Comfirm
-        title="删除历史记录?"
-        content="确定要删除这条历史记录吗?"
+        title={t.recents.delete_title}
+        content={t.recents.delete_content}
         onCancel={() => {
           setComfirmVisible(false);
         }}
@@ -250,7 +250,8 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
           setComfirmVisible(false);
         }}
         visible={comfirmVisible}
-        t={t}
+        yesText={t.confirm.yes}
+        noText={t.confirm.no}
       />
     </div>
   );

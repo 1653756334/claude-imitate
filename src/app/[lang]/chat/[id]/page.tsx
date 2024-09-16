@@ -10,10 +10,11 @@ const DynamicChatContent = dynamic(() => import("./ChatContent"), {
 export default async function Chat({ params }: { params: { id: string, lang: Global.SupportedLang } }) {
 
   const t = await getDictionary(params.lang);
-
+  const title = "这里写一个临时的吧";
+  
   return (
     <div>
-      <DynamicChatContent t={t} params={{id: params.id, chatList: []}} />
+      <DynamicChatContent t={t} params={{id: params.id, chatList: [], title}} />
     </div>
   );
 }

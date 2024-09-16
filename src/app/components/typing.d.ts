@@ -13,15 +13,27 @@ declare namespace Slider {
 
 declare namespace Comfirm {
   interface ComfirmProps {
-    t: Global.Dictionary;
     title: string;
     content?: string;
     onCancel?: () => void;
     onConfirm: () => void;
     visible: boolean;
+    yesText?: string;
+    noText?: string;
   }
 }
 
+declare namespace Modify {
+  interface ModifyProps {
+    title: string;
+    content: string;
+    onCancel: () => void;
+    onConfirm: (value: string) => void;
+    visible: boolean;
+    yesText?: string;
+    noText?: string;
+  }
+}
 declare namespace DropDown {
   interface DropdownItem {
     label: string;

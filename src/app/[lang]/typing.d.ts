@@ -14,6 +14,9 @@ declare namespace Global {
     new: {
       [key: string]: string;
     };
+    chat: {
+      [key: string]: string;
+    };
   }
 }
 
@@ -37,6 +40,7 @@ declare namespace Chat {
     t: Global.Dictionary;
     params: {
       id?: string;
+      title?: string;
       chatList?: Chat.ChatItem[];
     };
   };

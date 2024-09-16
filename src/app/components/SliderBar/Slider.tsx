@@ -159,12 +159,12 @@ export default function Slider({ t }: Slider.SlideProps) {
             </div>
           </div>
           <div
-            className={`p-3 pb-1 border-2 relative rounded-lg rounded-l-none border-orange-100 bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-100 ${
+            className={`p-3 pb-1 border relative rounded-lg rounded-l-none border-[#dcb272] bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-100 ${
               isExpanded || isPinned
                 ? "translate-x-0 opacity-100"
                 : "-translate-x-full opacity-0"
             } ${
-              isPinned ? "rounded-r-none shadow-none" : "rounded-lg "
+              isPinned ? "rounded-r-none shadow-none border-y-0" : "rounded-lg"
             } z-20 backdrop-blur-md`}
             style={{
               width: "18rem",
@@ -180,7 +180,7 @@ export default function Slider({ t }: Slider.SlideProps) {
             ></div>
             {/* 新对话区域 */}
             <div
-              className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-gray-200/60 rounded-md p-1 flex items-center`}
+              className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-amber-800/10 rounded-md p-1 flex items-center`}
               style={{ fontSize: "1.07rem" }}
             >
               <IconProvider.ChatAdd
@@ -198,14 +198,14 @@ export default function Slider({ t }: Slider.SlideProps) {
                   <span>{t.slider.history}</span>
                 </div>
                 <div
-                  className="flex flex-col text-sm overflow-y-auto scrollbar"
+                  className="flex flex-col text-sm overflow-y-auto scrollbar gap-1"
                   style={{ height: "calc(100vh - 15rem)" }}
                 >
                   {historyData &&
                     historyData.map((item) => {
                       return (
                         <div
-                          className="hover:bg-gray-200 rounded-md p-1 cursor-pointer flex items-center relative group"
+                          className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group"
                           key={item.id}
                         >
                           <IconProvider.Chat width={20} height={20} />

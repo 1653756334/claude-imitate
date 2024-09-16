@@ -13,13 +13,24 @@
   "recents": {
     "title": "Recents",
     "search": "Search Conversations...",
-    "new": "New Conversation"
+    "new": "New Conversation",
+    "delete_title": "Delete History?",
+    "delete_content": "Confirm delete this history?"
   },
   "confirm": {
     "yes": "Confirm",
-    "no": "Cancel"
+    "no": "Cancel",
+    "delete": "Delete",
+    "rename": "Rename"
   },
   "new": {
     "welcome": "Welcome"
+  },
+  "chat": {
+    "delete_title": "Confirm delete this chat?",
+    "delete_content": "Delete this chat will not be able to restore",
+    "rename_title": "Rename Chat",
+    "rename": "Rename",
+    "delete": "Delete"
   }
 }
