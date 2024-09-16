@@ -5,7 +5,6 @@ import {
   ArrowRightOutlined,
   ArrowUpOutlined,
   CommentOutlined,
-  DownOutlined,
   LinkOutlined,
   PlusOutlined,
   UpOutlined,

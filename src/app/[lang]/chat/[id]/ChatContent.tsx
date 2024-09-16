@@ -1,6 +1,5 @@
 "use client";
 import { CommentOutlined, DownOutlined } from "@ant-design/icons";
-import DropdownMenu from "@/app/components/DropDown";
 import React from "react";
 
 export default function ChatContent({ t, params }: Chat.ChatContentProps) {
