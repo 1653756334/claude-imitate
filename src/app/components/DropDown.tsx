@@ -4,6 +4,7 @@ const DropdownMenu: React.FC<DropDown.DropdownMenuProps> = ({
   items,
   callback,
   children,
+  position = "bottom",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [menuWidth, setMenuWidth] = useState<number | undefined>(undefined);
@@ -44,7 +45,7 @@ const DropdownMenu: React.FC<DropDown.DropdownMenuProps> = ({
       <div>
         <button
           type="button"
-          className="text-xs flex items-center justify-center w-full rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white font-medium text-gray-700 hover:bg-gray-50"
+          className={`text-xs flex items-center justify-center w-full rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-white font-medium text-gray-700 hover:bg-gray-50`}
           onClick={() => setIsOpen(!isOpen)}
         >
           {children}
@@ -66,8 +67,13 @@ const DropdownMenu: React.FC<DropDown.DropdownMenuProps> = ({
 
       {isOpen && (
         <div
-          className="origin-top-left absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-gray-300/60 z-50"
-          style={{ width: menuWidth ? `${menuWidth}px` : "auto" }}
+          className={`absolute ${
+            position === "top" ? "bottom-full mb-2" : "top-full mt-2"
+          } left-0 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 border border-gray-300/60 z-50`}
+          style={{ 
+            width: menuWidth ? `${menuWidth}px` : "auto",
+            [position === "top" ? "bottom" : "top"]: "100%"
+          }}
         >
           <div
             className="py-1"

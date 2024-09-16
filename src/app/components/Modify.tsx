@@ -38,7 +38,7 @@ export default function Modify({
           </button>
           <button
             className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-700/60"
-            onClick={() => onConfirm(value)}
+            onClick={() => onConfirm && onConfirm(value)}
           >
             {yesText}
           </button>

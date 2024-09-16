@@ -88,7 +88,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         </h1>
       </div>
       {/* 输入框 */}
-      <div className="w-full  gap-3 flex flex-col shadow-orange-700/30 drop-shadow-xl relative z-50">
+      <div className="w-full  gap-3 flex flex-col shadow-orange-700/30 drop-shadow-xl relative z-10">
         <div className="relative p-5 pr-12 bg-white rounded-2xl border border-gray-200">
           <div className="w-full">
             <textarea
@@ -100,7 +100,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
               style={{ minHeight: "50px", maxHeight: "360px" }} // 设置一个最小高度
             />
           </div>
-          <div className="text-sm relative z-50">
+          <div className="text-sm relative z-10">
             <div className="">
               <DropdownMenu
                 items={dropdownItems}
@@ -108,7 +108,9 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
                   chooseModel(item.label);
                 }}
                 width="100px"
-              >{model}</DropdownMenu>
+              >
+                {model}
+              </DropdownMenu>
             </div>
           </div>
         </div>

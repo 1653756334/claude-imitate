@@ -16,7 +16,7 @@ declare namespace Comfirm {
     title: string;
     content?: string;
     onCancel?: () => void;
-    onConfirm: () => void;
+    onConfirm?: () => void;
     visible: boolean;
     yesText?: string;
     noText?: string;
@@ -27,8 +27,8 @@ declare namespace Modify {
   interface ModifyProps {
     title: string;
     content: string;
-    onCancel: () => void;
-    onConfirm: (value: string) => void;
+    onCancel?: () => void;
+    onConfirm?: (value: string) => void;
     visible: boolean;
     yesText?: string;
     noText?: string;
@@ -44,6 +44,7 @@ declare namespace DropDown {
     callback: (item: DropdownItem) => void;
     items: DropdownItem[];
     width?: string;
+    position?: "top" | "bottom";
   }
 }
 
