@@ -219,7 +219,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         </div>
         <div className="grid grid-cols-3 gap-4 mt-4 overflow-hidden">
           {[...Array(6)].map((_, index) => (
-            <Link href={`/chat/${index}`}>
+            <Link href={`/chat/${index}`} key={index}>
               <div
                 key={index}
                 className={`flex flex-col justify-between cursor-pointer p-3 border rounded-md shadow-sm hover:drop-shadow-md
