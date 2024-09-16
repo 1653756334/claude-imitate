@@ -16,7 +16,7 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
         </div>
       </header>
       <main className="flex-1 flex flex-col gap-3 px-4 max-w-3xl mx-auto w-full pt-1">
-        {t.recents.title}
+        {params.id}
       </main>
     </div>
   );
