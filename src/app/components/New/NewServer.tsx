@@ -1,10 +1,12 @@
 import { getDictionary } from "@/app/[lang]/i18n";
-import NewContent from "./NewContent";
+import dynamic from "next/dynamic";
+
+const DynamicNewContent = dynamic(() => import("./NewContent"), { ssr: false });
 
 export default async function MainPage({lang}: {lang: Global.SupportedLang}) {
   const t = await getDictionary(lang);
 
   return (
-    <NewContent t={t}/>
+    <DynamicNewContent t={t}/>
   );
 }

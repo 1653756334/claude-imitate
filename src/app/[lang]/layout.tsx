@@ -21,7 +21,7 @@ export default async function I18nLayout({
         <meta property="og:title" content={t.title} key="title" />
       </head>
 
-      <body className="h-screen bg-gradient-to-l from-orange-100/80 to-orange-50/20 transition-all duration-200">
+      <body className="h-screen bg-gradient-to-l from-amber-900/20 to-amber-900/10 transition-all duration-200">
         <AntdRegistry>
           <div className="flex flex-row">
             <SlideServer lang={lang} />

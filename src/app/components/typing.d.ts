@@ -28,7 +28,7 @@ declare namespace DropDown {
   }
   
   interface DropdownMenuProps {
-    buttonText: string;
+    children: React.ReactNode;
     callback: (item: DropdownItem) => void;
     items: DropdownItem[];
     width?: string;

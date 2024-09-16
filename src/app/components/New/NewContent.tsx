@@ -1,15 +1,26 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { IconProvider } from "@/app/components/IconProvider";
-import { ArrowUpOutlined, LinkOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  ArrowUpOutlined,
+  CommentOutlined,
+  DownOutlined,
+  LinkOutlined,
+  PlusOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import DropdownMenu from "@/app/components/DropDown";
 import HintText from "@/app/components/HintText";
 import { message } from "antd";
+import Link from "next/link";
 
 export default function NewContent({ t }: { t: Global.Dictionary }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState("");
   const [fileList, setFileList] = useState<File[]>([]);
+  const [showRecents, setShowRecents] = useState(true);
+  const [model, setModel] = useState("gpt-4-1106-preview");
 
   const dropdownItems = [
     { label: "gpt-4-1106-preview" },
@@ -43,9 +54,13 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
     }
   };
 
-	const onRemoveFile = (file: File) => {
-		setFileList((prev) => prev.filter((f) => f !== file));
-	}
+  const chooseModel = (model: string) => {
+    setModel(model);
+  };
+
+  const onRemoveFile = (file: File) => {
+    setFileList((prev) => prev.filter((f) => f !== file));
+  };
 
   useEffect(() => {
     adjustHeight();
@@ -73,7 +88,8 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
           {t.new.welcome} , {"名字"}
         </h1>
       </div>
-      <div className="w-full  gap-3 flex flex-col shadow-orange-700/30 drop-shadow-xl relative">
+      {/* 输入框 */}
+      <div className="w-full  gap-3 flex flex-col shadow-orange-700/30 drop-shadow-xl relative z-50">
         <div className="relative p-5 pr-12 bg-white rounded-2xl border border-gray-200">
           <div className="w-full">
             <textarea
@@ -85,24 +101,24 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
               style={{ minHeight: "50px", maxHeight: "360px" }} // 设置一个最小高度
             />
           </div>
-          <div className="text-sm">
+          <div className="text-sm relative z-50">
             <div className="">
               <DropdownMenu
-                buttonText="gpt-4-1106-preview"
                 items={dropdownItems}
                 callback={(item) => {
-                  console.log(item);
+                  chooseModel(item.label);
                 }}
                 width="100px"
-              />
+              >{model}</DropdownMenu>
             </div>
           </div>
         </div>
         <div className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center">
           <ArrowUpOutlined className="text-white" />
         </div>
+        {/* 文件上传 */}
         <div
-          className={`fixed pt-1 -translate-y-1 px-2 top-full w-[96%] left-1/2 -translate-x-1/2 bg-orange-200/20 rounded-xl rounded-t-none -z-10 
+          className={`relative pt-1  px-2 w-[96%] mx-auto -top-5 bg-orange-200/20 rounded-xl rounded-t-none -z-10 
 					border border-orange-300 transition-all duration-300
 					${fileList.length == 0 ? "max-h-[3.25rem]" : "max-h-[18rem]"}`}
         >
@@ -170,7 +186,63 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
           </div>
         </div>
       </div>
-      <div></div>
+      {/* 最近对话 */}
+      <div className="w-full">
+        <div className="flex justify-between text-sm text-black/80 font-bold">
+          <div className="flex items-center gap-2">
+            <CommentOutlined className="text-blue-400" /> 最近对话{" "}
+            <div
+              className={`cursor-pointer hover:bg-gray-800/10 rounded-lg p-1 h-6 flex items-center justify-center scale-90 text-gray-500 z-0`}
+              onClick={() => setShowRecents(!showRecents)}
+            >
+              <UpOutlined
+                className={`transform transition-transform duration-300 ease-in-out select-none  ${
+                  showRecents ? "rotate-180" : ""
+                }`}
+              />
+              {showRecents ? (
+                ""
+              ) : (
+                <span className="ml-1 transition-opacity duration-300 ease-in-out">
+                  展开
+                </span>
+              )}
+            </div>
+          </div>
+          <Link href="/recents">
+            <div className="flex items-center gap-1 group cursor-pointer font-medium">
+              <span className="group-hover:underline">查看所有</span>{" "}
+              <span className="scale-85">
+                <ArrowRightOutlined className="text-sm" />
+              </span>
+            </div>
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 gap-4 mt-4 overflow-hidden">
+          {[...Array(6)].map((_, index) => (
+            <Link href={`/chat/${index}`}>
+              <div
+                key={index}
+                className={`flex flex-col justify-between cursor-pointer p-3 border rounded-md shadow-sm hover:drop-shadow-md
+              border-gray-200 bg-gradient-to-b from-white/30 to-white/10 hover:from-white/80 hover:to-white/10 transition-all duration-300 ease-in-out
+              ${
+                showRecents
+                  ? "max-h-[200px] opacity-100"
+                  : "max-h-0 opacity-0 overflow-hidden"
+              }`}
+              >
+                <div className="">
+                  <CommentOutlined />
+                </div>
+                <div className="mt-2 text-sm font-medium truncate">
+                  内容 {index + 1}
+                </div>
+                <div className="mt-2 text-xs text-gray-500">时间</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

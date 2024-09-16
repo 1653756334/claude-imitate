@@ -1,7 +1,19 @@
-import React from 'react'
+import React from "react";
+import dynamic from "next/dynamic";
 
-export default function Chat({ params }: { params: { id: string } }) {
+import {getDictionary} from "@/app/[lang]/i18n"
+
+const DynamicChatContent = dynamic(() => import("./ChatContent"), {
+  ssr: false,
+});
+
+export default async function Chat({ params }: { params: { id: string, lang: Global.SupportedLang } }) {
+
+  const t = await getDictionary(params.lang);
+
   return (
-    <div>Chat {params.id}</div>
-  )
+    <div>
+      <DynamicChatContent t={t} params={{id: params.id, chatList: []}} />
+    </div>
+  );
 }
