@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Modify({
   title,
@@ -9,7 +9,10 @@ export default function Modify({
   yesText,
   noText,
 }: Modify.ModifyProps) {
-  const [value, setValue] = useState(content);
+  const [value, setValue] = useState("");
+  useEffect(() => {
+    setValue(content);
+  }, [content]);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
@@ -26,8 +29,13 @@ export default function Modify({
                   flex flex-col justify-evenly `}
       >
         <h1 className="text-xl font-bold">{title}</h1>
-        <div>
-          <input type="text" value={value} onChange={onChange} />
+        <div className="w-full">
+          <input
+            type="text"
+            value={value}
+            onChange={onChange}
+            className="w-full h-10 px-2 rounded-md border border-gray-300 outline-none focus:border-blue-500 bg-gray-100/20 focus:bg-white"
+          />
         </div>
         <div className="flex justify-end gap-2">
           <button
