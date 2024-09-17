@@ -128,7 +128,10 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
           <div className="text-sm flex my-2 items-center gap-2 h-12">
             {selectedItems.length == 0 ? (
               <div className="flex items-center gap-2">
-                <div>你有 {historyData.length} 条历史对话记录 </div>
+                <div>
+                  {t.recents.you_have} {historyData.length}{" "}
+                  {t.recents.history_chat}
+                </div>
                 {historyData.length ? (
                   <div
                     className="text-blue-500 cursor-pointer"
@@ -136,7 +139,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                       setSelectedItems([historyData[0].id]);
                     }}
                   >
-                    多选
+                    {t.recents.multi_select}
                   </div>
                 ) : (
                   ""
@@ -145,7 +148,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
             ) : (
               <div className="flex items-center justify-between w-full">
                 <div className="font-bold text-blue-400">
-                  {selectedItems.length} 个对话已选择
+                  {selectedItems.length} {t.recents.select_chat}
                 </div>
                 <div className="flex items-center gap-3">
                   <div
@@ -154,7 +157,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                       setSelectedItems(historyData.map((item) => item.id));
                     }}
                   >
-                    全选
+                    {t.recents.select_all}
                   </div>
                   <div
                     className="cursor-pointer bg-gray-300/80 rounded-md px-2 py-1 hover:bg-gray-300 border border-gray-300"
@@ -162,13 +165,13 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                       setSelectedItems([]);
                     }}
                   >
-                    取消
+                    {t.confirm.no}
                   </div>
                   <div
                     className="cursor-pointer text-white bg-orange-700/80 rounded-md px-2 py-1 hover:bg-orange-700/90"
                     onClick={handleMultiDelete}
                   >
-                    删除选中
+                    {t.recents.delete_selected}
                   </div>
                 </div>
               </div>

@@ -204,15 +204,17 @@ export default function Slider({ t }: Slider.SlideProps) {
                   {historyData &&
                     historyData.map((item) => {
                       return (
-                        <div
-                          className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group"
-                          key={item.id}
-                        >
-                          <IconProvider.Chat width={20} height={20} />
-                          <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
-                            {item.title}
-                          </span>
-                        </div>
+                        <Link href={`/chat/${item.id}`}>
+                          <div
+                            className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group"
+                            key={item.id}
+                          >
+                            <IconProvider.Chat width={20} height={20} />
+                            <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
+                              {item.title}
+                            </span>
+                          </div>
+                        </Link>
                       );
                     })}
                   {/* 查看所有 */}

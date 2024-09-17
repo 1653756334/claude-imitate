@@ -176,14 +176,14 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
         </div>
         {/* 底部输入框 */}
         <div className="w-full  gap-3 flex flex-col relative z-10">
-          <div className="relative p-5 pr-12 bg-white rounded-2xl border-2 border-gray-300 border-b-0 rounded-b-none">
+          <div className="relative p-5 pb-3 pr-12 bg-white rounded-2xl border-2 border-gray-300 border-b-0 rounded-b-none flex flex-col gap-2">
             <div className="w-full">
               <textarea
                 ref={textareaRef}
                 value={content}
                 onChange={handleChange}
                 className="w-full outline-none scrollbar-thin scrollbar-thumb-orange-200 scrollbar-track-transparent resize-none bg-transparent scrollbar"
-                placeholder="请输入你的需求"
+                placeholder={t.new.placeholder}
                 rows={1}
                 style={{
                   minHeight: "24px",

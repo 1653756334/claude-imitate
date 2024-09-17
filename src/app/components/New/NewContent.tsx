@@ -46,7 +46,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       if (files.length + fileList.length > 5) {
-        message.error("你最多添加5个文件");
+        message.error(t.new.max5);
         return;
       }
       setFileList((prev) => [...prev, ...files]);
@@ -73,9 +73,9 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
     <div className="relative mx-auto h-full w-full max-w-3xl flex-1 l md:px-2 px-4 pb-20 md:pl-8 lg:mt-6 min-h-screen-w-scroll !mt-0 flex flex-col items-center gap-8 pt-12 md:pr-14 2xl:pr-20">
       {/* 使用免费计划 */}
       <div className="text-sm text-gray-500 p-2 rounded-full bg-orange-200/50 border border-orange-300">
-        Using limited free plan{" "}
+        {t.new.using}
         <span className="text-orange-600/80 cursor-pointer hover:text-orange-600 hover:underline">
-          Upgrade
+          {t.new.upgrade}
         </span>
       </div>
       {/* 欢迎 */}
@@ -96,7 +96,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
               value={content}
               onChange={handleChange}
               className="w-full outline-none scrollbar-thin scrollbar-thumb-orange-200 scrollbar-track-transparent resize-none bg-transparent scrollbar"
-              placeholder="请输入你的需求"
+              placeholder={t.new.placeholder}
               style={{ minHeight: "50px", maxHeight: "360px" }} // 设置一个最小高度
             />
           </div>
@@ -126,10 +126,10 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
           <div className=" flex items-center justify-between h-12 select-none">
             <div className="text-sm text-gray-500">
               {fileList.length == 0
-                ? "这里是描述"
-                : `${fileList.length} 个文件已添加`}
+                ? t.new.file_desc
+                : `${fileList.length} ${t.new.file_added}`}
             </div>
-            <HintText hintText="上传文件或者图片">
+            <HintText hintText={t.new.upload_desc}>
               <div
                 className={`text-sm text-gray-500 font-bold cursor-pointer hover:bg-gray-800/10 rounded-lg p-2 flex items-center justify-center
 						gap-1`}
@@ -137,7 +137,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
                   document.querySelector("input")?.click();
                 }}
               >
-                <LinkOutlined className="text-lg" /> 上传文件
+                <LinkOutlined className="text-lg" /> {t.new.upload_file}
                 <input
                   type="file"
                   className="hidden"
@@ -191,7 +191,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
       <div className="w-full">
         <div className="flex justify-between text-sm text-black/80 font-bold">
           <div className="flex items-center gap-2">
-            <CommentOutlined className="text-blue-400" /> 最近对话{" "}
+            <CommentOutlined className="text-blue-400" /> {t.new.recent_chat}{" "}
             <div
               className={`cursor-pointer hover:bg-gray-800/10 rounded-lg p-1 h-6 flex items-center justify-center scale-90 text-gray-500 z-0`}
               onClick={() => setShowRecents(!showRecents)}
@@ -205,14 +205,16 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
                 ""
               ) : (
                 <span className="ml-1 transition-opacity duration-300 ease-in-out">
-                  展开
+                  {t.new.expand}
                 </span>
               )}
             </div>
           </div>
           <Link href="/recents">
             <div className="flex items-center gap-1 group cursor-pointer font-medium">
-              <span className="group-hover:underline">查看所有</span>{" "}
+              <span className="group-hover:underline">
+                {t.new.show_all}
+              </span>
               <span className="scale-85">
                 <ArrowRightOutlined className="text-sm" />
               </span>

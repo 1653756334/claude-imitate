@@ -15,7 +15,13 @@
     "search": "Search Conversations...",
     "new": "New Conversation",
     "delete_title": "Delete History?",
-    "delete_content": "Confirm delete this history?"
+    "delete_content": "Confirm delete this history?",
+    "you_have": "You have",
+    "history_chat": "previous chats",
+    "multi_select": "Multi-select",
+    "select_all": "Select All",
+    "select_chat": "selected chats",
+    "delete_selected": "Delete Selected"
   },
   "confirm": {
     "yes": "Confirm",
@@ -24,7 +30,18 @@
     "rename": "Rename"
   },
   "new": {
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "max5": "You can add up to 5 files",
+    "using": "Using limited free plan",
+    "upgrade": "Upgrade",
+    "placeholder": "Please enter your requirements",
+    "file_desc": "using documents, images, and more",
+    "file_added": "files added",
+    "upload_desc": "Upload files or images",
+    "upload_file": "Upload File",
+    "recent_chat": "Recent Chat",
+    "expand": "Expand",
+    "show_all": "Show All"
   },
   "chat": {
     "delete_title": "Confirm delete this chat?",
