@@ -22,7 +22,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     <div className="markdown-content">
       <ReactMarkdown
         components={{
-          code({ node, inline, className, children, ...props }: any) {
+          code({ inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || "");
             const codeString = String(children).replace(/\n$/, "");
             return !inline && match ? (
