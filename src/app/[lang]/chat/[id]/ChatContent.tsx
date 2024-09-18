@@ -1,5 +1,9 @@
 "use client";
-import { CommentOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  ArrowUpOutlined,
+  CommentOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
 import React, { useRef, useState, useEffect } from "react";
 
 import OutsideClickHandler from "@/app/components/OutsideClickHandler";
@@ -9,25 +13,25 @@ import DropdownMenu from "@/app/components/DropDown";
 import SelfMessage from "@/app/components/SelfMessage";
 import AssistantMsg from "@/app/components/AssistantMsg";
 
-const markdown = `
-# Hello
-
-This is some **bold** and *italic* text.
-
-\`\`\`javascript
-function greet(name) {
-  console.log(\`Hello, \${name}!\`);
-}
-greet('World');
-\`\`\`
-1234567
-  `;
-
-export default function ChatContent({ t, params }: Chat.ChatContentProps) {
+export default function ChatContent({ t }: Chat.ChatContentProps) {
   const [showModify, setShowModify] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [curChat, setCurChat] = useState<string>("");
   const [content, setContent] = useState("");
   const [model, setModel] = useState("gpt-4-1106-preview");
+  const [chatList, setChatList] = useState<Chat.ChatItem[]>([]);
+
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 370)}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [content]);
 
   const [confirmData, setConfirmData] = useState<Comfirm.ComfirmProps>({
     title: "",
@@ -64,11 +68,7 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
       visible: true,
     };
     setConfirmData({
-      title: t.chat.delete_title,
-      content: t.chat.delete_content,
-      yesText: t.confirm.delete,
-      noText: t.confirm.no,
-      visible: true,
+      ...data,
       onConfirm: () => {
         setConfirmData({ ...data, visible: false });
       },
@@ -83,17 +83,13 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
   const onRenameChat = () => {
     const data = {
       title: t.chat.rename_title,
-      content: params.title!,
+      content: "",
       yesText: t.confirm.rename,
       noText: t.confirm.no,
       visible: true,
     };
     setModifyData({
-      title: t.chat.rename_title,
-      content: params.title!,
-      yesText: t.confirm.rename,
-      noText: t.confirm.no,
-      visible: true,
+      ...data,
       onConfirm: (value: string) => {
         renameChat(value);
         setModifyData({ ...data, visible: false });
@@ -110,17 +106,63 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
   const chooseModel = (model: string) => {
     setModel(model);
   };
-  const adjustTextareaHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 370)}px`;
-    }
-  };
 
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [content]);
+  async function streamChat(message: string) {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    if (!response.ok) {
+      throw new Error("网络响应不正常");
+    }
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader!.read();
+      if (done) {
+        break;
+      }
+
+      const chunk = decoder.decode(value);
+      const lines = chunk.split("\n");
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          // console.log(line);
+          const data = line.replace("data: ", "");
+          if (data === "[DONE]") {
+            // 流结束
+          } else {
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices[0].delta.content;
+              console.log(content);
+              if (content) {
+                setCurChat((prev) => prev + content);
+              }
+              // 在这里处理接收到的内容，例如更新UI
+            } catch (error) {
+              console.error("解析JSON时出错:", error);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const sendMessage = async () => {
+    if (content.trim() === "") {
+      return;
+    }
+    setChatList((prev) => [...prev, { role: "user", content }]);
+    streamChat(content);
+  };
 
   return (
     <div>
@@ -163,16 +205,27 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
       <main className="flex-1 flex flex-col px-4 max-w-3xl mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5">
         {/* 聊天记录 */}
         <div className="flex-1 overflow-y-auto scrollbar flex flex-col gap-5">
-          <SelfMessage
-            content={markdown}
-            avatar={"https://avatars.githubusercontent.com/u/103247417?v=4"}
-            onReEdit={() => {
-              setContent(markdown);
-            }}
-          />
-          <AssistantMsg
-            content={markdown+"21vfnduhijlbndwiuvghwguybfdnjwskvjbio eribhkkryukwhbejiowbrhowgbyruwkgbdsjkvhdsui"}
-          />
+          {chatList.map((item, index) => {
+            if (item.role === "user") {
+              return (
+                <SelfMessage
+                  key={index}
+                  content={item.content}
+                  avatar={
+                    "https://avatars.githubusercontent.com/u/103247417?v=4"
+                  }
+                  onReEdit={() => {
+                    setContent("markdown");
+                  }}
+                />
+              );
+            } else {
+              return <AssistantMsg key={index} content={item.content} />;
+            }
+          })}
+          {curChat && curChat.trim() !== "" && (
+            <AssistantMsg content={curChat} />
+          )}
         </div>
         {/* 底部输入框 */}
         <div className="w-full  gap-3 flex flex-col relative z-10">
@@ -206,6 +259,12 @@ export default function ChatContent({ t, params }: Chat.ChatContentProps) {
                 </DropdownMenu>
               </div>
             </div>
+          </div>
+          <div
+            className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center"
+            onClick={sendMessage}
+          >
+            <ArrowUpOutlined className="text-white" />
           </div>
         </div>
       </main>

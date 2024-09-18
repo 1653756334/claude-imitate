@@ -14,7 +14,7 @@ export default async function Chat({ params }: { params: { id: string, lang: Glo
   
   return (
     <div>
-      <DynamicChatContent t={t} params={{id: params.id, chatList: [], title}} />
+      <DynamicChatContent t={t} />
     </div>
   );
 }

@@ -23,25 +23,15 @@ declare namespace Global {
 declare namespace Recents {
   interface RecentsContentProps {
     t: Global.Dictionary;
-  };
+  }
 }
 
 declare namespace Chat {
-  enum ChatRole {
-    USER = "user",
-    ASSISTANT = "assistant",
-  }
   interface ChatItem {
-    sessionId: string;
-    role: ChatRole;
+    role: "user" | "assistant";
     content: string;
   }
   interface ChatContentProps {
     t: Global.Dictionary;
-    params: {
-      id?: string;
-      title?: string;
-      chatList?: Chat.ChatItem[];
-    };
-  };
+  }
 }

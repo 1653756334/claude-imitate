@@ -10,14 +10,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.60",
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.1",
     "@formatjs/intl-localematcher": "^0.5.4",
     "@svgr/webpack": "^8.1.0",
     "@types/negotiator": "^0.6.3",
+    "ai": "^3.3.41",
     "antd": "^5.20.6",
     "negotiator": "^0.6.3",
     "next": "14.2.9",
+    "openai": "^4.62.0",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^9.0.1",
