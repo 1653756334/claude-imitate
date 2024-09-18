@@ -13,3 +13,5 @@ export default async function SlideServer({ lang }: Slider.SlideServerProps) {
     </div>
   );
 }
+
+

@@ -14,7 +14,7 @@ export default function SelfMessage({
   return (
     <div className="w-full">
       <div className="flex items-start">
-        <div className="flex items-start bg-gradient-to-tl from-amber-500/20 to-amber-800/5 rounded-lg p-2 gap-3 px-3 relative group max-w-full">
+        <div className="flex items-start bg-gradient-to-b from-[#eae7dc] to-[#ded8c4] rounded-lg p-2 gap-3 px-3 relative group max-w-full">
           <img src={avatar} alt="avatar" className="w-6 h-6 rounded-full flex-shrink-0" />
           <div className="markdown-content border-slate-400 rounded-lg overflow-hidden break-words">
             <MarkdownRenderer content={content} />
