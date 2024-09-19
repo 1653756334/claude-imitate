@@ -9,6 +9,10 @@
 @tailwind utilities;
 
 
+input,select {
+  outline: none;
+}
+
 @layer utilities {
   .scrollbar::-webkit-scrollbar {
       width: 10px;

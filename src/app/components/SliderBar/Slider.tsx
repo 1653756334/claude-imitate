@@ -1,9 +1,12 @@
 "use client";
 import { ArrowRightOutlined, DownOutlined } from "@ant-design/icons";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
 import { IconProvider } from "../IconProvider";
+import Modal from "../Modal";
+import Setting from "../Setting";
 
 const playpen_Sans = Jacques_Francois({
   subsets: ["latin"],
@@ -62,16 +65,37 @@ const history = [
 ];
 
 export default function Slider({ t }: Slider.SlideProps) {
+  const path = usePathname();
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
   const [historyData, setHistoryData] = useState<Slider.HistoryData[] | null>(
     null
   );
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [showSetting, setShowSetting] = useState(false);
 
   const sliderRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
+
+  const setting = [
+    {
+      id: "2",
+      title: "设置",
+      click: () => {
+        setShowSetting(true);
+      },
+    },
+    {
+      id: "1",
+      title: "退出登录",
+      click: () => {
+        console.log("选项1");
+      },
+    },
+  ];
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -101,12 +125,16 @@ export default function Slider({ t }: Slider.SlideProps) {
     if (isPinned === "true") {
       setIsPinned(true);
     }
-  }, []);
+  }, [path]);
 
   const handleSpin = () => {
     localStorage.setItem("isPinned", (!isPinned).toString());
     setIsPinned(!isPinned);
   };
+
+  if (path.includes("/login") || path.includes("/register")) {
+    return null;
+  }
 
   return (
     <>
@@ -205,10 +233,7 @@ export default function Slider({ t }: Slider.SlideProps) {
                     historyData.map((item) => {
                       return (
                         <Link href={`/chat/${item.id}`} key={item.id}>
-                          <div
-                            className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group"
-                            
-                          >
+                          <div className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group">
                             <IconProvider.Chat width={20} height={20} />
                             <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
                               {item.title}
@@ -232,25 +257,54 @@ export default function Slider({ t }: Slider.SlideProps) {
               <div className="h-20 flex flex-col justify-between">
                 {/* 用户信息 */}
                 <div
-                  className={`flex items-center justify-between gap-2 p-1 pl-2 pr-2 rounded-md h-10
+                  className={`flex items-centergap-2 p-1 pl-2 pr-2 rounded-md h-10
             cursor-pointer border border-gray-300/50 hover:border-gray-300
             bg-gradient-to-b from-orange-50 via-orange-100/70 to-orange-50
-            shadow-sm hover:shadow-sm transition-all duration-200`}
+            shadow-sm hover:shadow-sm transition-all duration-200 relative`}
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden`}
+                    className="flex items-center justify-between gap-2 w-full"
+                    onClick={() => setShowUserInfo(!showUserInfo)}
                   >
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
-                      alt={t.slider.avatar}
-                      className="object-cover"
-                    />
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden`}
+                    >
+                      <img
+                        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
+                        alt={t.slider.avatar}
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="h-10 flex-1 leading-10 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
+                      rhueive@gmail.com
+                    </div>
+                    <div className="text-xs flex items-center justify-center scale-75">
+                      <DownOutlined />
+                    </div>
                   </div>
-                  <div className="h-10 flex-1 leading-10 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
-                    rhueive@gmail.com
-                  </div>
-                  <div className="text-xs flex items-center justify-center scale-75">
-                    <DownOutlined />
+                  <div
+                    className={`absolute left-0 bottom-full w-full transition-all duration-200
+                    border rounded-md shadow-sm shadow-gray-500/20 bg-orange-50 overflow-hidden p-1`}
+                    style={{
+                      maxHeight: showUserInfo ? "500px" : "0",
+                      opacity: showUserInfo ? "1" : "0",
+                      transform: showUserInfo
+                        ? "translateY(0)"
+                        : "translateY(100%)",
+                      visibility: showUserInfo ? "visible" : "hidden",
+                    }}
+                  >
+                    {setting.map((item) => {
+                      return (
+                        <div
+                          className="h-6 w-full hover:bg-orange-100 cursor-pointer p-1 flex items-center text-sm"
+                          key={item.id}
+                          onClick={item.click}
+                        >
+                          {item.title}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
                 {/* 设置 */}
@@ -285,6 +339,14 @@ export default function Slider({ t }: Slider.SlideProps) {
             <IconProvider.Drawer />
           </div>
         </nav>
+        {/* 设置 */}
+        <Modal
+          isOpen={showSetting}
+          onClose={() => setShowSetting(false)}
+          onConfirm={() => setShowSetting(false)}
+        >
+          <Setting />
+        </Modal>
       </div>
     </>
   );
