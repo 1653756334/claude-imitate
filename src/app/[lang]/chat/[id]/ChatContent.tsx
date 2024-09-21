@@ -261,10 +261,10 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             </div>
           </div>
           <div
-            className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center"
+            className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white"
             onClick={sendMessage}
           >
-            <ArrowUpOutlined className="text-white" />
+            <ArrowUpOutlined />
           </div>
         </div>
       </main>

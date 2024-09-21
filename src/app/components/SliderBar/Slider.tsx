@@ -7,6 +7,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { IconProvider } from "../IconProvider";
 import Modal from "../Modal";
 import Setting from "../Setting";
+import OutsideClickHandler from "../OutsideClickHandler";
 
 const playpen_Sans = Jacques_Francois({
   subsets: ["latin"],
@@ -282,30 +283,32 @@ export default function Slider({ t }: Slider.SlideProps) {
                       <DownOutlined />
                     </div>
                   </div>
-                  <div
-                    className={`absolute left-0 bottom-full w-full transition-all duration-200
+                  <OutsideClickHandler onOutsideClick={() => setShowUserInfo(false)}>
+                    <div
+                      className={`absolute left-0 bottom-full w-full transition-all duration-200
                     border rounded-md shadow-sm shadow-gray-500/20 bg-orange-50 overflow-hidden p-1`}
-                    style={{
-                      maxHeight: showUserInfo ? "500px" : "0",
-                      opacity: showUserInfo ? "1" : "0",
-                      transform: showUserInfo
-                        ? "translateY(0)"
-                        : "translateY(100%)",
-                      visibility: showUserInfo ? "visible" : "hidden",
-                    }}
-                  >
-                    {setting.map((item) => {
-                      return (
-                        <div
-                          className="h-6 w-full hover:bg-orange-100 cursor-pointer p-1 flex items-center text-sm"
-                          key={item.id}
-                          onClick={item.click}
-                        >
-                          {item.title}
-                        </div>
-                      );
-                    })}
-                  </div>
+                      style={{
+                        maxHeight: showUserInfo ? "500px" : "0",
+                        opacity: showUserInfo ? "1" : "0",
+                        transform: showUserInfo
+                          ? "translateY(0)"
+                          : "translateY(100%)",
+                        visibility: showUserInfo ? "visible" : "hidden",
+                      }}
+                    >
+                      {setting.map((item) => {
+                        return (
+                          <div
+                            className="h-6 w-full hover:bg-orange-100 cursor-pointer p-1 flex items-center text-sm"
+                            key={item.id}
+                            onClick={item.click}
+                          >
+                            {item.title}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </OutsideClickHandler>
                 </div>
                 {/* 设置 */}
                 <div className="p-1 pl-2 pr-2 flex justify-between items-center">

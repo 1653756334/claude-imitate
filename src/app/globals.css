@@ -8,30 +8,30 @@
 @tailwind components;
 @tailwind utilities;
 
-
-input,select {
+input,
+select {
   outline: none;
 }
 
 @layer utilities {
   .scrollbar::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
+    width: 10px;
+    height: 10px;
   }
 
   .scrollbar::-webkit-scrollbar-track {
-      border-radius: 100vh;
-      background: #f7f4ed;
+    border-radius: 100vh;
+    background: #f7f4ed;
   }
 
   .scrollbar::-webkit-scrollbar-thumb {
-      background: #e6e3d4;
-      border-radius: 100vh;
-      border: 3px solid #f6f7ed;
+    background: #e6e3d4;
+    border-radius: 100vh;
+    border: 3px solid #f6f7ed;
   }
 
   .scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #ded8c4;
+    background: #ded8c4;
   }
 }
 
@@ -46,4 +46,19 @@ input,select {
 
 .animate-spin {
   animation: spin 1.5s linear infinite;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.8);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

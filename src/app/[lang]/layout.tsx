@@ -1,6 +1,7 @@
 import React from "react";
 import "../globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { ConfigProvider } from "antd";
 import SlideServer from "../components/SliderBar/SlideServer";
 
 import { getDictionary } from "@/app/[lang]/i18n";
@@ -23,12 +24,29 @@ export default async function I18nLayout({
 
       <body className="h-screen bg-gradient-to-l from-amber-900/20 to-amber-900/10 transition-all duration-200">
         <AntdRegistry>
-          <div className="flex flex-row">
-            <SlideServer lang={lang} />
-            <div className="flex-1">
-              {children}
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimaryBorderHover: "#edc17e",
+                colorPrimary: "#bc9c6a",
+              },
+              components: {
+                Slider: {
+                  trackBg: "#dcb272",
+                  handleActiveColor: "#edc17e",
+                  trackHoverBg: "#a8916d",
+                  handleActiveOutlineColor: "rgba(247, 230, 203, 0.1)",
+                  handleColor: "#edc17e",
+                  dotActiveBorderColor: "rgba(247, 230, 203, 0.1)",
+                },
+              },
+            }}
+          >
+            <div className="flex flex-row">
+              <SlideServer lang={lang} />
+              <div className="flex-1">{children}</div>
             </div>
-          </div>
+          </ConfigProvider>
         </AntdRegistry>
       </body>
     </html>

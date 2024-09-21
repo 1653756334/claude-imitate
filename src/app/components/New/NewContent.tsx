@@ -114,8 +114,8 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
             </div>
           </div>
         </div>
-        <div className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center">
-          <ArrowUpOutlined className="text-white" />
+        <div className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white">
+          <ArrowUpOutlined />
         </div>
         {/* 文件上传 */}
         <div
