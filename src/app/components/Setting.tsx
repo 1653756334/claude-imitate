@@ -26,7 +26,7 @@ export default function Setting() {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg w-[500px] mx-auto text-gray-700">
+    <div className="bg-white shadow-md rounded-lg md:w-[500px] max-md:w-[95vw] mx-auto text-gray-700">
       <div className="flex justify-between items-center px-6 py-4 border-b">
         <h2 className="text-xl font-semibold">设置</h2>
       </div>
