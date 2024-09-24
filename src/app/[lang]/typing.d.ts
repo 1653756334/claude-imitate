@@ -17,6 +17,12 @@ declare namespace Global {
     chat: {
       [key: string]: string;
     };
+    setting: {
+      [key: string]: string;
+    };
+    login: {
+      [key: string]: string;
+    };
   }
 }
 
@@ -37,6 +43,10 @@ declare namespace Chat {
 }
 
 declare namespace Login {
+  interface LoginContentProps {
+    t: Global.Dictionary;
+  }
+
   interface LoginFrom {
     email: string;
     password: string;
@@ -56,16 +66,19 @@ declare namespace Login {
     form: FormInstance<LoginFrom>;
     setActiveTab: (tab: string) => void;
     onLogin: (values: LoginFrom) => void;
+    t: Global.Dictionary;
   }
   interface RegisterProps {
     form: FormInstance<RegisterFrom>;
     onRegister: (values: RegisterFrom) => void;
     sendVerificationCode: (email: string) => void;
+    t: Global.Dictionary;
   }
   interface ResetPasswordProps {
     form: FormInstance<ResetPasswordFrom>;
     onResetPassword: (values: ResetPasswordFrom) => void;
     sendVerificationCode: (email: string) => void;
     setActiveTab: (tab: string) => void;
+    t: Global.Dictionary;
   }
 }

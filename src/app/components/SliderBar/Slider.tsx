@@ -90,14 +90,14 @@ export default function Slider({ t }: Slider.SlideProps) {
   const setting = [
     {
       id: "2",
-      title: "设置",
+      title: t.slider.settings,
       click: () => {
         setShowSetting(true);
       },
     },
     {
       id: "1",
-      title: "退出登录",
+      title: t.slider.logout,
       click: () => {
         router.push("/login");
       },
@@ -379,7 +379,7 @@ export default function Slider({ t }: Slider.SlideProps) {
         onClose={() => setShowSetting(false)}
         onConfirm={() => setShowSetting(false)}
       >
-        <Setting />
+        <Setting t={t} />
       </Modal>
     </>
   );

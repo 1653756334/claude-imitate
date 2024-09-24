@@ -7,6 +7,7 @@ export default function ResetPassword({
   onResetPassword,
   sendVerificationCode,
   setActiveTab,
+  t,
 }: Login.ResetPasswordProps) {
   const [sendingCode, setSendingCode] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -33,22 +34,22 @@ export default function ResetPassword({
         <Form.Item
           name="email"
           rules={[
-            { required: true, type: "email", message: "请输入有效的邮箱地址" },
+            { required: true, type: "email", message: t.login.email_required },
           ]}
         >
-          <Input prefix={<MailOutlined />} placeholder="你忘记密码的邮箱" />
+          <Input prefix={<MailOutlined />} placeholder={t.login.email} />
         </Form.Item>
         <Form.Item>
           <Space.Compact style={{width: "100%"}}>
             <Form.Item
               name="verificationCode"
               noStyle
-              rules={[{ required: true, message: "请输入验证码" }]}
+              rules={[{ required: true, message: t.login.verification_code_required }]}
             >
               <Input
                 prefix={<SafetyOutlined />}
                 style={{ width: "calc(100% - 120px)" }}
-                placeholder="验证码"
+                placeholder={t.login.verification_code}
               />
             </Form.Item>
             <Button
@@ -56,23 +57,23 @@ export default function ResetPassword({
               disabled={sendingCode || countdown > 0}
               onClick={onEmailSend}
             >
-              {countdown > 0 ? `${countdown}秒后重发` : "发送验证码"}
+              {countdown > 0 ? `${countdown} ${t.login.seconds_resend}` : t.login.send_code}
             </Button>
           </Space.Compact>
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "请输入你想要重置的密码" }]}
+          rules={[{ required: true, message: t.login.password_required }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="请设置密码" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t.login.password} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            重置密码
+            {t.login.reset_password}
           </Button>
         </Form.Item>
         <Button type="link" onClick={() => setActiveTab("login")}>
-          返回登录
+          {t.login.back_to_login}
         </Button>
       </Form>
     </div>

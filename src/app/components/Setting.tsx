@@ -3,7 +3,11 @@ import { Slider, Dropdown, Button, InputNumber, Input } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 
-export default function Setting() {
+interface SettingProps {
+  t: Global.Dictionary;
+}
+
+export default function Setting({ t }: SettingProps) {
   const [apiEndpoint, setApiEndpoint] = useState("");
   const [modelNames, setModelNames] = useState("");
   const [model, setModel] = useState("gpt-4o-mini");
@@ -28,18 +32,18 @@ export default function Setting() {
   return (
     <div className="bg-white shadow-md rounded-lg md:w-[500px] max-md:w-[95vw] mx-auto text-gray-700">
       <div className="flex justify-between items-center px-6 py-4 border-b">
-        <h2 className="text-xl font-semibold">设置</h2>
+        <h2 className="text-xl font-semibold">{t.setting.title}</h2>
       </div>
       <div className="p-6">
         <div className="space-y-4">
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
-              自定义接口
+              {t.setting.api_endpoint}
             </label>
             <div className="w-1/2 flex items-center">
               <Input
                 onChange={(e) => setApiEndpoint(e.target.value)}
-                placeholder="https://api.openai.com/v1/"
+                placeholder="https://api.openai.com/"
                 value={apiEndpoint}
               />
             </div>
@@ -47,7 +51,21 @@ export default function Setting() {
 
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
-              自定义模型名
+              {t.setting.api_key}
+            </label>
+            <div className="w-1/2 flex items-center">
+              <Input
+                type="text"
+                value={modelNames}
+                onChange={(e) => setModelNames(e.target.value)}
+                placeholder="sk-xxx"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-1/2 text-sm font-medium text-gray-700">
+              {t.setting.custom_model}
             </label>
             <div className="w-1/2 flex items-center">
               <Input
@@ -61,7 +79,7 @@ export default function Setting() {
 
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
-              模型
+              {t.setting.model}
             </label>
             <Dropdown
               menu={{
@@ -78,7 +96,7 @@ export default function Setting() {
 
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
-              历史记录条数
+              {t.setting.history_count}
             </label>
             <div className="w-1/2 flex items-center">
               <Slider
@@ -101,7 +119,7 @@ export default function Setting() {
 
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
-              随机性
+              {t.setting.random}
             </label>
             <div className="w-1/2 flex items-center">
               <Slider
@@ -125,13 +143,13 @@ export default function Setting() {
 
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
-              系统提示词
+              {t.setting.system_prompt}
             </label>
             <div className="w-1/2 flex items-center">
               <TextArea
                 value={systemPrompt}
                 onChange={(e) => setSystemPrompt(e.target.value)}
-                placeholder="请输入系统提示词"
+                placeholder={t.setting.system_prompt_placeholder}
                 autoSize={{ minRows: 3, maxRows: 5 }}
                 className="scrollbar"
               />

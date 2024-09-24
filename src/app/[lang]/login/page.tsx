@@ -1,7 +1,16 @@
 import React from "react";
 import dynamic from "next/dynamic";
-const LoginContent = dynamic(() => import("./LoginContent"), { ssr: false });
+const DynamicLoginContent = dynamic(() => import("./LoginContent"), {
+  ssr: false,
+});
 
-export default function Login() {
-  return <LoginContent />;
+import { getDictionary } from "@/app/[lang]/i18n";
+
+export default async function Login({
+  params: { lang },
+}: {
+  params: { lang: Global.SupportedLang };
+}) {
+  const t = await getDictionary(lang);
+  return <DynamicLoginContent t={t} />;
 }
