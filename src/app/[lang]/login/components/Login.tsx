@@ -2,31 +2,31 @@ import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
 import React from "react";
 
-export default function Login({ form, setActiveTab, onLogin }: Login.LoginProps) {
+export default function Login({ form, setActiveTab, onLogin, t }: Login.LoginProps) {
   return (
     <div>
       <Form name="login" onFinish={onLogin} form={form}>
         <Form.Item
           name="email"
           rules={[
-            { required: true, type: "email", message: "请输入有效的邮箱地址" },
+            { required: true, type: "email", message: t.login.email_required },
           ]}
         >
-          <Input prefix={<MailOutlined />} placeholder="邮箱" />
+          <Input prefix={<MailOutlined />} placeholder={t.login.email} />
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "请输入密码" }]}
+          rules={[{ required: true, message: t.login.password_required }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="密码" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t.login.password} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            登录
+            {t.login.login}
           </Button>
         </Form.Item>
         <Button type="link" onClick={() => setActiveTab("forgotPassword")}>
-          忘记密码？
+          {t.login.forgot_password}
         </Button>
       </Form>
     </div>

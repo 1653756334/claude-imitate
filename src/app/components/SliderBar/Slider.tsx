@@ -1,7 +1,12 @@
 "use client";
-import { ArrowRightOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  CloseOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
 import { IconProvider } from "../IconProvider";
@@ -67,6 +72,7 @@ const history = [
 
 export default function Slider({ t }: Slider.SlideProps) {
   const path = usePathname();
+  const router = useRouter();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
@@ -84,16 +90,16 @@ export default function Slider({ t }: Slider.SlideProps) {
   const setting = [
     {
       id: "2",
-      title: "设置",
+      title: t.slider.settings,
       click: () => {
         setShowSetting(true);
       },
     },
     {
       id: "1",
-      title: "退出登录",
+      title: t.slider.logout,
       click: () => {
-        console.log("选项1");
+        router.push("/login");
       },
     },
   ];
@@ -101,6 +107,7 @@ export default function Slider({ t }: Slider.SlideProps) {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isPinned) return;
+      if (screen.width < 768) return;
       if (
         titleRef.current?.contains(e.target as Node) ||
         navRef.current?.contains(e.target as Node)
@@ -141,22 +148,27 @@ export default function Slider({ t }: Slider.SlideProps) {
     <>
       {/* 当屏幕太小时候显示 */}
       <div
-        className={`w-18rem text-xl h-5 fixed top-3 left-3 z-30 transition-none sm:hidden transition-all duration-100
+        className={`w-18rem text-xl h-5 fixed top-4 left-5 z-30 transition-none sm:hidden transition-all duration-100
         ${isExpanded || isPinned ? "opacity-0" : "opacity-100"}`}
         onClick={() => {
           setIsExpanded(true);
         }}
       >
-        <IconProvider.Drawer />
+        <IconProvider.Drawer width={32} height={24} />
       </div>
+      {/* 小屏幕时候的遮罩 */}
+      <div
+        className={`max-sm:fixed max-sm:inset-0 max-sm:bg-black/50 max-sm:z-20 ${
+          isExpanded || isPinned ? "max-sm:opacity-100" : "max-sm:opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsExpanded(false)}
+      ></div>
 
       <div
-        className={`ease-in-out duration-200 relative z-20 transition-all ${
-          isExpanded || isPinned
-            ? "max-sm:translate-x-0 max-sm:left-0"
-            : "max-sm:-translate-x-full max-sm:-left-1/2 max-sm:hidden"
+        className={`ease-in-out duration-200 relative z-20 transition-all  max-sm:translate-x-0 max-sm:left-0${
+          isExpanded || isPinned ? "max-sm:translate-x-0 max-sm:left-0" : ""
         }`}
-        style={{ width: isPinned ? "18rem" : "4.5rem" }}
+        style={{ width: isPinned ? "18rem" : "0.1rem" }}
       >
         <nav
           className={`z-20 h-screen max-sm:relative max-sm:inset-0 select-none relative `}
@@ -164,7 +176,9 @@ export default function Slider({ t }: Slider.SlideProps) {
           ref={navRef}
         >
           <div
-            className={`w-18rem text-xl !opacity-100 fixed z-30 top-3 left-3 flex items-center justify-between`}
+            className={`w-18rem text-xl !opacity-100 fixed z-30 top-3 left-3 flex items-center justify-between ${
+              isExpanded ? "max-sm:!flex" : "max-sm:hidden"
+            }`}
             style={{ width: "calc(18rem - 1.5rem)" }}
             ref={logoRef}
           >
@@ -173,7 +187,7 @@ export default function Slider({ t }: Slider.SlideProps) {
             </Link>
             {/* 固定 */}
             <div
-              className={` cursor-pointer hover:bg-orange-200 rounded-md p-1 w-6 h-6 text-sm flex items-center justify-center transition-all duration-200 ${
+              className={` cursor-pointer hover:bg-orange-200 rounded-md p-1 w-6 h-6 text-sm flex items-center justify-center transition-all duration-200 max-sm:hidden ${
                 isExpanded || isPinned
                   ? "opacity-100 translate-x-0"
                   : "opacity-0 pointer-events-none -translate-x-full"
@@ -186,13 +200,25 @@ export default function Slider({ t }: Slider.SlideProps) {
                 }`}
               />
             </div>
+            <div
+              className={` cursor-pointer hover:bg-orange-200 rounded-md p-1 w-6 h-6 text-sm items-center justify-center transition-all duration-200 block sm:hidden ${
+                isExpanded || isPinned
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 pointer-events-none -translate-x-full"
+              }`}
+              onClick={() => setIsExpanded(false)}
+            >
+              <CloseOutlined />
+            </div>
           </div>
           <div
-            className={`p-3 pb-1 border relative rounded-lg rounded-l-none border-[#dcb272] bg-gradient-to-r from-orange-100/50 to-orange-50/10 shadow-2xl shadow-orange-300 ease-in-out duration-100 ${
-              isExpanded || isPinned
-                ? "translate-x-0 opacity-100"
-                : "-translate-x-full opacity-0"
-            } ${
+            className={`p-3 pb-1 border relative rounded-lg rounded-l-none border-[#dcb272] bg-gradient-to-r from-orange-100/50
+              to-orange-50/10 max-sm:from-orange-50 max-sm:to-amber-50 max-sm:shadow-none max-sm:!mt-0 max-sm:rounded-none max-sm:!h-screen
+              shadow-2xl shadow-orange-300 ease-in-out duration-100 ${
+                isExpanded || isPinned
+                  ? "translate-x-0 opacity-100"
+                  : "-translate-x-full opacity-0"
+              } ${
               isPinned ? "rounded-r-none shadow-none border-y-0" : "rounded-lg"
             } z-20 backdrop-blur-md`}
             style={{
@@ -330,7 +356,7 @@ export default function Slider({ t }: Slider.SlideProps) {
             </div>
           </div>
           <div
-            className={`w-8 h-16 rounded-full flex flex-col justify-between items-center overflow-hidden absolute bottom-3 left-3 transition-all duration-200 ${
+            className={`w-8 h-16 rounded-full flex flex-col justify-between items-center overflow-hidden absolute bottom-3 left-3 transition-all duration-200 max-sm:hidden ${
               isExpanded || isPinned
                 ? "opacity-0 translate-x-2"
                 : "opacity-100 translate-x-0"
@@ -346,15 +372,15 @@ export default function Slider({ t }: Slider.SlideProps) {
             <IconProvider.Drawer />
           </div>
         </nav>
-        {/* 设置 */}
-        <Modal
-          isOpen={showSetting}
-          onClose={() => setShowSetting(false)}
-          onConfirm={() => setShowSetting(false)}
-        >
-          <Setting />
-        </Modal>
       </div>
+      {/* 设置 */}
+      <Modal
+        isOpen={showSetting}
+        onClose={() => setShowSetting(false)}
+        onConfirm={() => setShowSetting(false)}
+      >
+        <Setting t={t} />
+      </Modal>
     </>
   );
 }

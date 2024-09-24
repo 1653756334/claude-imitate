@@ -1,14 +1,16 @@
 {
-  "title": "聊天转图表",
+  "title": "Dlaude",
   "slider": {
-    "logo": "克劳德AI",
+    "logo": "Dlaude",
     "new": "开启新对话",
     "history": "对话历史",
     "delete_one": "确认删除此对话？",
     "delete_all": "确认删除所有对话？",
     "avatar": "用户头像",
     "show_all": "显示所有",
-    "help": "帮助和支持"
+    "help": "帮助和支持",
+    "settings": "设置",
+    "logout": "登出"
   },
   "recents": {
     "title": "历史记录",
@@ -49,5 +51,32 @@
     "rename_title": "重命名对话",
     "rename": "重命名",
     "delete": "删除"
+  },
+  "setting": {
+    "title": "设置",
+    "api_endpoint": "API 端点",
+    "api_key": "API 密钥",
+    "custom_model": "自定义模型",
+    "model": "模型",
+    "history_count": "历史记录数量",
+    "random": "随机性",
+    "system_prompt": "系统提示词",
+    "system_prompt_placeholder": "请输入你的系统提示词"
+  },
+  "login": {
+    "login": "登录",
+    "register": "注册",
+    "reset_password": "重置密码",
+    "forgot_password": "忘记密码？",
+    "email": "邮箱",
+    "password": "密码",
+    "verification_code": "验证码",
+    "send_code": "发送验证码",
+    "email_required": "请输入有效的邮箱地址",
+    "password_required": "请输入你的密码",
+    "confirm_password_required": "请确认你的密码",
+    "confirm_password_not_match": "两次输入的密码不一致",
+    "seconds_resend": "秒后重发",
+    "back_to_login": "返回登录"
   }
 }

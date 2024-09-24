@@ -1,5 +1,5 @@
 {
-  "title": "chat2graph",
+  "title": "Dlaude",
   "slider": {
     "logo": "Dlaude",
     "new": "New Chat",
@@ -8,7 +8,9 @@
     "delete_all": "Confirm delete all chats?",
     "avatar": "User Avatar",
     "help": "Help and Support",
-    "show_all": "Show All"
+    "show_all": "Show All",
+    "settings": "Settings",
+    "logout": "Logout"
   },
   "recents": {
     "title": "Recents",
@@ -49,5 +51,32 @@
     "rename_title": "Rename Chat",
     "rename": "Rename",
     "delete": "Delete"
+  },
+  "setting": {
+    "title": "Settings",
+    "api_endpoint": "API Endpoint",
+    "api_key": "API Key",
+    "custom_model": "Custom Model",
+    "model": "Model",
+    "history_count": "History Count",
+    "random": "Random",
+    "system_prompt": "System Prompt",
+    "system_prompt_placeholder": "Please enter your system prompt"
+  },
+  "login": {
+    "login": "Login",
+    "register": "Register",
+    "reset_password": "Reset Password",
+    "forgot_password": "Forgot Password?",
+    "email": "Email",
+    "password": "Password",
+    "verification_code": "Verification Code",
+    "send_code": "Send Code",
+    "email_required": "Please enter a valid email address",
+    "password_required": "Please enter your password",
+    "confirm_password_required": "Please confirm your password",
+    "confirm_password_not_match": "The two passwords that you entered do not match!",
+    "seconds_resend": "seconds",
+    "back_to_login": "Back to Login"
   }
 }

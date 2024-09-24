@@ -6,6 +6,7 @@ export default function Register({
   form,
   onRegister,
   sendVerificationCode,
+  t,
 }: Login.RegisterProps) {
   const [sendingCode, setSendingCode] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -32,22 +33,22 @@ export default function Register({
         <Form.Item
           name="email"
           rules={[
-            { required: true, type: "email", message: "请输入有效的邮箱地址" },
+            { required: true, type: "email", message: t.login.email_required },
           ]}
         >
-          <Input prefix={<MailOutlined />} placeholder="邮箱" />
+          <Input prefix={<MailOutlined />} placeholder={t.login.email} />
         </Form.Item>
         <Form.Item>
           <Space.Compact style={{ width: "100%" }}>
             <Form.Item
               name="verificationCode"
               noStyle
-              rules={[{ required: true, message: "请输入验证码" }]}
+              rules={[{ required: true, message: t.login.verification_code_required }]}
             >
               <Input
                 prefix={<SafetyOutlined />}
                 style={{ width: "calc(100% - 120px)" }}
-                placeholder="验证码"
+                placeholder={t.login.verification_code}
               />
             </Form.Item>
             <Button
@@ -55,36 +56,36 @@ export default function Register({
               disabled={sendingCode || countdown > 0}
               onClick={onEmailSend}
             >
-              {countdown > 0 ? `${countdown}秒后重发` : "发送验证码"}
+              {countdown > 0 ? `${countdown} ${t.login.seconds_resend}` : t.login.send_code}
             </Button>
           </Space.Compact>
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: "请输入密码" }]}
+          rules={[{ required: true, message: t.login.password_required }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="密码" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t.login.password} />
         </Form.Item>
         <Form.Item
           name="confirmPassword"
           dependencies={["password"]}
           rules={[
-            { required: true, message: "请确认密码" },
+            { required: true, message: t.login.confirm_password_required },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error("两次输入的密码不一致"));
+                return Promise.reject(new Error(t.login.confirm_password_not_match));
               },
             }),
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="确认密码" />
+          <Input.Password prefix={<LockOutlined />} placeholder={t.login.confirm_password} />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            注册
+            {t.login.register}
           </Button>
         </Form.Item>
       </Form>

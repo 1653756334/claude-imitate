@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconProvider } from "@/app/components/IconProvider";
 import PrintWord from "@/app/components/PrintWord";
 import { Form, Tabs } from 'antd';
@@ -8,10 +8,22 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import ResetPassword from "./components/ResetPassword";
 
-export default function LoginContent() {
+const wordList = [
+  "Don't limit your imagination",
+]
+
+export default function LoginContent({t}: Login.LoginContentProps) {
   const [activeTab, setActiveTab] = useState('login');
+  const [word, setWord] = useState(wordList[0]);
   
   const [form] = Form.useForm<Login.LoginFrom>();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWord(wordList[Math.floor(Math.random() * wordList.length)]);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const onLogin = (form: Login.LoginFrom) => {
     console.log('表单提交:', form);
@@ -35,32 +47,31 @@ export default function LoginContent() {
   const tableItems = [
     {
       key: 'login',
-      label: '登录',
-      children: <Login form={form} setActiveTab={setActiveTab} onLogin={onLogin} />,
+      label: t.login.login,
+      children: <Login form={form} setActiveTab={setActiveTab} onLogin={onLogin} t={t}/>,
     },
     {
       key: 'register',
-      label: '注册',
-      children: <Register form={form} onRegister={onRegister} sendVerificationCode={sendVerificationCode} />,
+      label: t.login.register,
+      children: <Register form={form} onRegister={onRegister} sendVerificationCode={sendVerificationCode} t={t}/>,
     },
   ];
 
 
   return (
     <div className="h-screen bg-[#f5f4ef]">
-      <div className="w-1/2 bg-[#f5f4ef] mx-auto">
+      <div className="w-1/2 bg-[#f5f4ef] mx-auto max-sm:w-screen">
         <div className="flex grow flex-col justify-center pt-2 [@media(min-height:800px)]:pt-6 [@media(min-height:900px)]:pt-10 w-full min-h-screen px-5 -translate-y-10">
           <div className="flex justify-center gap-3 items-center text-2xl" >
-            <IconProvider.AI fill="#d97757" width={32} height={32}/> 名字
+            <IconProvider.AI fill="#d97757" width={32} height={32}/> {t.title}
           </div>
           <div className="select-none mt-12">
-            <PrintWord word={"你的能量超乎你想象"}/>
-
+            <PrintWord word={word}/>
           </div>
-          <div className=" mt-16 w-[460px] mx-auto bg-[#f1efe7] rounded-3xl border-2 border-[#d2d0c5] px-10 py-6">
+          <div className=" mt-16 w-[460px] max-sm:w-[90vw] mx-auto bg-[#f1efe7] rounded-3xl border-2 border-[#d2d0c5] px-10 py-6">
             <Tabs activeKey={activeTab} onChange={setActiveTab} items={tableItems} defaultActiveKey="login"/>
             {activeTab === 'forgotPassword' && (
-              <ResetPassword form={form} onResetPassword={onResetPassword} sendVerificationCode={sendVerificationCode} setActiveTab={setActiveTab} />
+              <ResetPassword form={form} onResetPassword={onResetPassword} sendVerificationCode={sendVerificationCode} setActiveTab={setActiveTab} t={t}/>
             )}
           </div>
         </div>
