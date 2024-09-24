@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Slider, Dropdown, Button, InputNumber, Input } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
+
+import { useSettingStore } from "../lib/store";
 
 interface SettingProps {
   t: Global.Dictionary;
 }
 
 export default function Setting({ t }: SettingProps) {
-  const [apiEndpoint, setApiEndpoint] = useState("");
-  const [modelNames, setModelNames] = useState("");
-  const [model, setModel] = useState("gpt-4o-mini");
-  const [temperature, setTemperature] = useState(0.5);
-  const [historyCount, setHistoryCount] = useState(5);
-  const [systemPrompt, setSystemPrompt] = useState("");
+  const { settings, saveOneSettingToLocal } = useSettingStore();
 
   const modelOptions = [
     { key: "gpt-3.5-turbo", label: "gpt-3.5-turbo" },
@@ -26,7 +23,8 @@ export default function Setting({ t }: SettingProps) {
   const handleModelChange = (modelInfo: { key: string }) => {
     const model = modelOptions.find((item) => item.key === modelInfo.key);
     if (!model) return;
-    setModel(model.label);
+    saveOneSettingToLocal("currentDisplayModel", model.label);
+    saveOneSettingToLocal("currentModel", model.key);
   };
 
   return (
@@ -42,9 +40,9 @@ export default function Setting({ t }: SettingProps) {
             </label>
             <div className="w-1/2 flex items-center">
               <Input
-                onChange={(e) => setApiEndpoint(e.target.value)}
+                onChange={(e) => saveOneSettingToLocal("baseUrl", e.target.value)}
                 placeholder="https://api.openai.com/"
-                value={apiEndpoint}
+                value={settings.baseUrl}
               />
             </div>
           </div>
@@ -56,8 +54,8 @@ export default function Setting({ t }: SettingProps) {
             <div className="w-1/2 flex items-center">
               <Input
                 type="text"
-                value={modelNames}
-                onChange={(e) => setModelNames(e.target.value)}
+                value={settings.APIKey}
+                onChange={(e) => saveOneSettingToLocal("APIKey", e.target.value)}
                 placeholder="sk-xxx"
               />
             </div>
@@ -70,8 +68,8 @@ export default function Setting({ t }: SettingProps) {
             <div className="w-1/2 flex items-center">
               <Input
                 type="text"
-                value={modelNames}
-                onChange={(e) => setModelNames(e.target.value)}
+                value={settings.customerModels.join(",")}
+                onChange={(e) => saveOneSettingToLocal("customerModels", e.target.value.split(","))}
                 placeholder="model1,model2,model3"
               />
             </div>
@@ -83,12 +81,13 @@ export default function Setting({ t }: SettingProps) {
             </label>
             <Dropdown
               menu={{
-                items: modelOptions,
+                items: settings.models,
                 onClick: (e) => handleModelChange(e),
               }}
+              trigger={["click"]}
             >
               <Button>
-                {model}
+                {settings.currentDisplayModel}
                 <DownOutlined />
               </Button>
             </Dropdown>
@@ -103,16 +102,16 @@ export default function Setting({ t }: SettingProps) {
                 min={0}
                 max={16}
                 step={1}
-                value={historyCount}
-                onChange={(value) => setHistoryCount(value)}
+                value={settings.historyNum}
+                onChange={(value) => saveOneSettingToLocal("historyNum", value)}
                 className="w-4/5"
               />
               <InputNumber
                 min={1}
                 max={20}
                 style={{ margin: "0 16px" }}
-                value={historyCount}
-                onChange={(value) => setHistoryCount(value || 0)}
+                value={settings.historyNum}
+                onChange={(value) => saveOneSettingToLocal("historyNum", value || 0)}
               />
             </div>
           </div>
@@ -126,8 +125,8 @@ export default function Setting({ t }: SettingProps) {
                 min={0}
                 max={1}
                 step={0.1}
-                value={temperature}
-                onChange={(value) => setTemperature(value)}
+                value={settings.random}
+                onChange={(value) => saveOneSettingToLocal("random", value)}
                 className="w-4/5"
               />
               <InputNumber
@@ -135,8 +134,8 @@ export default function Setting({ t }: SettingProps) {
                 max={1}
                 step={0.1}
                 style={{ margin: "0 16px" }}
-                value={temperature}
-                onChange={(value) => setTemperature(value || 0)}
+                value={settings.random}
+                onChange={(value) => saveOneSettingToLocal("random", value || 0)}
               />
             </div>
           </div>
@@ -147,8 +146,8 @@ export default function Setting({ t }: SettingProps) {
             </label>
             <div className="w-1/2 flex items-center">
               <TextArea
-                value={systemPrompt}
-                onChange={(e) => setSystemPrompt(e.target.value)}
+                value={settings.sysPrompt}
+                onChange={(e) => saveOneSettingToLocal("sysPrompt", e.target.value)}
                 placeholder={t.setting.system_prompt_placeholder}
                 autoSize={{ minRows: 3, maxRows: 5 }}
                 className="scrollbar"

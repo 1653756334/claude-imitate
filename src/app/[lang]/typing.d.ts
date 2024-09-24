@@ -82,3 +82,64 @@ declare namespace Login {
     t: Global.Dictionary;
   }
 }
+
+declare namespace Store {
+  interface Model {
+    label: string; // 显示的名称
+    key: string; // 实际的名称
+  }
+  interface Setting {
+    baseUrl: string;
+    APIKey: string;
+    models: Model[];
+    customerModels: string[];
+    currentDisplayModel: string;
+    currentModel: string;
+    historyNum: number;
+    random: number;
+    sysPrompt: string;
+  }
+  interface SettingState {
+    settings: Setting;
+  }
+  interface SettingAction {
+    getSettingFromLocal: () => void;
+    saveSettingsToLocal: (setting: Setting) => void;
+    saveOneSettingToLocal: <K extends keyof Setting>(key: K, value: Setting[K]) => void;
+  }
+
+  interface User {
+    email: string;
+    avatar: string;
+    name: string;
+  }
+  interface UserState {
+    user: User;
+  }
+  interface UserAction {
+    setUserToLocal: (user: User) => void;
+    getUserFromLocal: () => void;
+  }
+
+  interface Message {
+    id: string;
+    content: string;
+    role: "user" | "assistant";
+    createdAt: number;
+  }
+  interface Session {
+    id: string;
+    messages: Message[];
+  }
+  interface SessionState {
+    data: Session[];
+  }
+  interface SessionAction {
+    addMessage: (sessionId: string, message: Message) => void;
+    deleteMessage: (id: string, messageId: string) => void;
+    addSession: (id: string) => void;
+    deleteSession: (id: string) => void;
+    saveSessionToLocal: () => void;
+    getSessionFromLocal: () => void;
+  }
+}

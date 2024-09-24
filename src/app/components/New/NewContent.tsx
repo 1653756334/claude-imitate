@@ -13,6 +13,7 @@ import DropdownMenu from "@/app/components/DropDown";
 import HintText from "@/app/components/HintText";
 import { message } from "antd";
 import Link from "next/link";
+import { useUserStore } from "@/app/lib/store";
 
 export default function NewContent({ t }: { t: Global.Dictionary }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -20,6 +21,8 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
   const [fileList, setFileList] = useState<File[]>([]);
   const [showRecents, setShowRecents] = useState(true);
   const [model, setModel] = useState("gpt-4-1106-preview");
+
+  const { user } = useUserStore();
 
   const dropdownItems = [
     { label: "gpt-4-1106-preview" },
@@ -84,7 +87,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
           <IconProvider.AI height={32} width={32} fill="#d57858" />
         </div>
         <h1 className="text-[2.5rem] text-gray-800/70 ">
-          {t.new.welcome} , {"名字"}
+          {t.new.welcome} , {user.name}
         </h1>
       </div>
       {/* 输入框 */}

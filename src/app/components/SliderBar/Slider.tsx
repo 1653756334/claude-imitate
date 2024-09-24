@@ -7,12 +7,18 @@ import {
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
 import { IconProvider } from "../IconProvider";
 import Modal from "../Modal";
 import Setting from "../Setting";
 import OutsideClickHandler from "../OutsideClickHandler";
+import {
+  useSessionStore,
+  useUserStore,
+  useSettingStore,
+} from "@/app/lib/store";
 
 const playpen_Sans = Jacques_Francois({
   subsets: ["latin"],
@@ -87,7 +93,11 @@ export default function Slider({ t }: Slider.SlideProps) {
   const titleRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
-  const setting = [
+  const { user, setUserToLocal, getUserFromLocal } = useUserStore();
+  const { getSettingFromLocal } = useSettingStore();
+  const { data } = useSessionStore();
+
+  const popoverSetting = [
     {
       id: "2",
       title: t.slider.settings,
@@ -95,13 +105,13 @@ export default function Slider({ t }: Slider.SlideProps) {
         setShowSetting(true);
       },
     },
-    {
-      id: "1",
-      title: t.slider.logout,
-      click: () => {
-        router.push("/login");
-      },
-    },
+    // {
+    //   id: "1",
+    //   title: t.slider.logout,
+    //   click: () => {
+    //     router.push("/login");
+    //   },
+    // },
   ];
 
   useEffect(() => {
@@ -133,6 +143,7 @@ export default function Slider({ t }: Slider.SlideProps) {
     if (isPinned === "true") {
       setIsPinned(true);
     }
+    getSettingFromLocal();
   }, [path]);
 
   const handleSpin = () => {
@@ -159,7 +170,9 @@ export default function Slider({ t }: Slider.SlideProps) {
       {/* 小屏幕时候的遮罩 */}
       <div
         className={`max-sm:fixed max-sm:inset-0 max-sm:bg-black/50 max-sm:z-20 ${
-          isExpanded || isPinned ? "max-sm:opacity-100" : "max-sm:opacity-0 pointer-events-none"
+          isExpanded || isPinned
+            ? "max-sm:opacity-100"
+            : "max-sm:opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsExpanded(false)}
       ></div>
@@ -298,14 +311,16 @@ export default function Slider({ t }: Slider.SlideProps) {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center overflow-hidden`}
                     >
-                      <img
-                        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
+                      <Image
+                        width={24}
+                        height={24}
+                        src={user.avatar}
                         alt={t.slider.avatar}
-                        className="object-cover"
+                        className="object-cover w-full h-full rounded-full"
                       />
                     </div>
-                    <div className="h-10 flex-1 leading-10 text-sm text-center overflow-hidden text-ellipsis whitespace-nowrap">
-                      rhueive@gmail.com
+                    <div className="h-10 flex-1 leading-10 text-[0.8rem] text-center overflow-hidden text-ellipsis whitespace-nowrap">
+                      {user.email}
                     </div>
                     <div className="text-xs flex items-center justify-center scale-75">
                       <DownOutlined />
@@ -326,7 +341,7 @@ export default function Slider({ t }: Slider.SlideProps) {
                         visibility: showUserInfo ? "visible" : "hidden",
                       }}
                     >
-                      {setting.map((item) => {
+                      {popoverSetting.map((item) => {
                         return (
                           <div
                             className="h-6 w-full hover:bg-orange-100 cursor-pointer p-1 flex items-center text-sm"
@@ -362,11 +377,13 @@ export default function Slider({ t }: Slider.SlideProps) {
                 : "opacity-100 translate-x-0"
             }`}
           >
-            <div className="border rounded-full overflow-hidden p-1">
-              <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/33.png"
+            <div className="border rounded-full overflow-hidden p-1 w-8 h-8">
+              <Image
+                width={24}
+                height={24}
+                src={user.avatar}
                 alt={t.slider.avatar}
-                className="object-cover"
+                className="object-cover w-full h-full rounded-full"
               />
             </div>
             <IconProvider.Drawer />
