@@ -208,17 +208,19 @@ export default function Slider({ t }: Slider.SlideProps) {
               style={{ width: "18rem" }}
             ></div>
             {/* 新对话区域 */}
-            <div
-              className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-amber-800/10 rounded-md p-1 flex items-center`}
-              style={{ fontSize: "1.07rem" }}
-            >
-              <IconProvider.ChatAdd
-                width={20}
-                height={20}
-                className="-rotate-90"
-              />
-              <span className="ml-1">{t.slider.new}</span>
-            </div>
+            <Link href={"/"}>
+              <div
+                className={`mt-5 mb-5 cursor-pointer text-orange-700 hover:bg-amber-800/10 rounded-md p-1 flex items-center`}
+                style={{ fontSize: "1.07rem" }}
+              >
+                <IconProvider.ChatAdd
+                  width={20}
+                  height={20}
+                  className="-rotate-90"
+                />
+                <span className="ml-1">{t.slider.new}</span>
+              </div>
+            </Link>
             {/* 从这里开始对话历史到底部 */}
             <div className="flex flex-col gap-2">
               <div>
@@ -283,7 +285,9 @@ export default function Slider({ t }: Slider.SlideProps) {
                       <DownOutlined />
                     </div>
                   </div>
-                  <OutsideClickHandler onOutsideClick={() => setShowUserInfo(false)}>
+                  <OutsideClickHandler
+                    onOutsideClick={() => setShowUserInfo(false)}
+                  >
                     <div
                       className={`absolute left-0 bottom-full w-full transition-all duration-200
                     border rounded-md shadow-sm shadow-gray-500/20 bg-orange-50 overflow-hidden p-1`}
