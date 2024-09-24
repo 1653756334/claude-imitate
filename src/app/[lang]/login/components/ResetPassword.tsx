@@ -30,7 +30,7 @@ export default function ResetPassword({
 
   return (
     <div>
-      <Form name="forgotPassword" onFinish={onResetPassword}>
+      <Form name="forgotPassword" onFinish={onResetPassword} form={form}>
         <Form.Item
           name="email"
           rules={[

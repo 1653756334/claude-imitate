@@ -52,6 +52,7 @@ declare namespace Login {
     password: string;
   }
   interface RegisterFrom {
+    username: string;
     email: string;
     password: string;
     code: string;

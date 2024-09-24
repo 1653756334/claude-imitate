@@ -68,15 +68,19 @@
     "register": "Register",
     "reset_password": "Reset Password",
     "forgot_password": "Forgot Password?",
-    "email": "Email",
+    "email": "Email or Nickname",
     "password": "Password",
     "verification_code": "Verification Code",
     "send_code": "Send Code",
     "email_required": "Please enter a valid email address",
     "password_required": "Please enter your password",
+    "verification_code_required": "Please enter the verification code",
+    "confirm_password": "Confirm Password",
     "confirm_password_required": "Please confirm your password",
     "confirm_password_not_match": "The two passwords that you entered do not match!",
     "seconds_resend": "seconds",
-    "back_to_login": "Back to Login"
+    "back_to_login": "Back to Login",
+    "nickname": "Nickname",
+    "nickname_required": "Please enter your nickname"
   }
 }

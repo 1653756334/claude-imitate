@@ -68,15 +68,19 @@
     "register": "注册",
     "reset_password": "重置密码",
     "forgot_password": "忘记密码？",
-    "email": "邮箱",
+    "email": "邮箱或昵称",
     "password": "密码",
     "verification_code": "验证码",
     "send_code": "发送验证码",
     "email_required": "请输入有效的邮箱地址",
     "password_required": "请输入你的密码",
+    "confirm_password": "确认密码",
     "confirm_password_required": "请确认你的密码",
     "confirm_password_not_match": "两次输入的密码不一致",
+    "verification_code_required": "请输入验证码",
     "seconds_resend": "秒后重发",
-    "back_to_login": "返回登录"
+    "back_to_login": "返回登录",
+    "nickname": "昵称",
+    "nickname_required": "请输入你的昵称"
   }
 }

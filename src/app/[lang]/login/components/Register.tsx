@@ -1,4 +1,9 @@
-import { LockOutlined, MailOutlined, SafetyOutlined } from "@ant-design/icons";
+import {
+  LockOutlined,
+  MailOutlined,
+  SafetyOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { Button, Form, Input, Space } from "antd";
 import React, { useState } from "react";
 
@@ -17,11 +22,11 @@ export default function Register({
     setCountdown(10);
     const interval = setInterval(() => {
       setCountdown((prevCountdown) => {
-				if(prevCountdown <= 0) {
-					setSendingCode(false);
-					clearInterval(interval);
-					return 0;
-				}
+        if (prevCountdown <= 0) {
+          setSendingCode(false);
+          clearInterval(interval);
+          return 0;
+        }
         return prevCountdown - 1;
       });
     }, 1000);
@@ -29,7 +34,13 @@ export default function Register({
 
   return (
     <div>
-      <Form name="register" onFinish={onRegister}>
+      <Form name="register" onFinish={onRegister} form={form}>
+        <Form.Item
+          name="username"
+          rules={[{ required: true, message: t.login.nickname_required }]}
+        >
+          <Input prefix={<UserOutlined />} placeholder={t.login.nickname} />
+        </Form.Item>
         <Form.Item
           name="email"
           rules={[
@@ -43,7 +54,9 @@ export default function Register({
             <Form.Item
               name="verificationCode"
               noStyle
-              rules={[{ required: true, message: t.login.verification_code_required }]}
+              rules={[
+                { required: true, message: t.login.verification_code_required },
+              ]}
             >
               <Input
                 prefix={<SafetyOutlined />}
@@ -56,7 +69,9 @@ export default function Register({
               disabled={sendingCode || countdown > 0}
               onClick={onEmailSend}
             >
-              {countdown > 0 ? `${countdown} ${t.login.seconds_resend}` : t.login.send_code}
+              {countdown > 0
+                ? `${countdown} ${t.login.seconds_resend}`
+                : t.login.send_code}
             </Button>
           </Space.Compact>
         </Form.Item>
@@ -64,7 +79,10 @@ export default function Register({
           name="password"
           rules={[{ required: true, message: t.login.password_required }]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder={t.login.password} />
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder={t.login.password}
+          />
         </Form.Item>
         <Form.Item
           name="confirmPassword"
@@ -76,12 +94,17 @@ export default function Register({
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error(t.login.confirm_password_not_match));
+                return Promise.reject(
+                  new Error(t.login.confirm_password_not_match)
+                );
               },
             }),
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder={t.login.confirm_password} />
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder={t.login.confirm_password}
+          />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" block>

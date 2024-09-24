@@ -9,7 +9,7 @@ export default function Login({ form, setActiveTab, onLogin, t }: Login.LoginPro
         <Form.Item
           name="email"
           rules={[
-            { required: true, type: "email", message: t.login.email_required },
+            { required: true, message: t.login.email_required },
           ]}
         >
           <Input prefix={<MailOutlined />} placeholder={t.login.email} />
