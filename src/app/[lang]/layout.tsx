@@ -22,7 +22,7 @@ export default async function I18nLayout({
         <meta property="og:title" content={t.title} key="title" />
       </head>
 
-      <body className="h-screen bg-gradient-to-l from-amber-900/20 to-amber-900/10 transition-all duration-200">
+      <body className="h-screen globle-bg transition-all duration-200">
         <AntdRegistry>
           <ConfigProvider
             theme={{

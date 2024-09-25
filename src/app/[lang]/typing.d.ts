@@ -151,5 +151,7 @@ declare namespace Store {
     getSessionFromLocal: () => void;
     setCurMsg: (msg: string) => void;
     getSessionById: (id: string) => Session | undefined;
+    getReversedChatData: () => Session[];
+    renameSession: (id: string, title: string) => void;
   }
 }

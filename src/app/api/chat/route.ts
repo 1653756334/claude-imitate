@@ -11,6 +11,8 @@ export async function POST(req: NextRequest) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
+  // console.log(await req.text());
+
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini", // 使用正确的模型名称

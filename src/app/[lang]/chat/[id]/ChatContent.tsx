@@ -15,6 +15,7 @@ import DropdownMenu from "@/app/components/DropDown";
 import SelfMessage from "@/app/components/SelfMessage";
 import AssistantMsg from "@/app/components/AssistantMsg";
 import { useSettingStore, useSessionStore } from "@/app/lib/store";
+import { throttle } from "@/app/lib/utils";
 
 export default function ChatContent({ t }: Chat.ChatContentProps) {
   const pathname = usePathname();
@@ -26,8 +27,14 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
   const [chatList, setChatList] = useState<Global.ChatItem[]>([]);
   const chatListRef = useRef<HTMLDivElement>(null);
   const { settings, saveOneSettingToLocal } = useSettingStore();
-  const { setCurMsg, curMsg, getSessionById, addMessage, deleteSession } =
-    useSessionStore();
+  const {
+    setCurMsg,
+    curMsg,
+    getSessionById,
+    addMessage,
+    deleteSession,
+    renameSession,
+  } = useSessionStore();
 
   const router = useRouter();
 
@@ -60,11 +67,14 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
   const hasSentMessage = useRef(true);
 
-  useEffect(() => {
-    // 先加载历史记录
-    const session = getSessionById(session_id);
-    setChatList(session?.messages || []);
+  // 先加载历史记录
+  const session = getSessionById(session_id) || { messages: [], title: "" };
 
+  useEffect(() => {
+    if (hasSentMessage.current) {
+      setChatList(session.messages);
+      downToBottom();
+    }
     // 说明从上个页面过来，需要发送
     if (curMsg !== "" && hasSentMessage.current) {
       streamChat(curMsg);
@@ -73,12 +83,15 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       // 清除 curMsg，防止重复发送
       setCurMsg("");
     }
-
     // 清理函数
     return () => {
       hasSentMessage.current = false;
     };
-  }, [session_id]); // 使用空依赖数组
+  }, []);
+
+  useEffect(() => {
+    setChatList(session.messages);
+  }, [session.messages.length]);
 
   useEffect(() => {
     adjustTextareaHeight();
@@ -104,13 +117,11 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       },
     });
   };
-  const renameChat = (value: string) => {
-    console.log(value);
-  };
+
   const onRenameChat = () => {
     const data = {
       title: t.chat.rename_title,
-      content: "",
+      content: session.title,
       yesText: t.confirm.rename,
       noText: t.confirm.no,
       visible: true,
@@ -118,33 +129,42 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     setModifyData({
       ...data,
       onConfirm: (value: string) => {
-        renameChat(value);
-        setModifyData({ ...data, visible: false });
+        renameSession(session_id, value);
+        setModifyData({ ...data, visible: false, content: value });
       },
       onCancel: () => {
         setModifyData({ ...data, visible: false });
       },
     });
   };
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleEditChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
-    adjustTextareaHeight();
   };
   const chooseModel = (item: Store.Model) => {
     saveOneSettingToLocal("currentModel", item.value);
     saveOneSettingToLocal("currentDisplayModel", item.label);
   };
 
+  const isScrolledToBottom = () => {
+    if (chatListRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatListRef.current;
+      return scrollTop + clientHeight >= scrollHeight - 30; // 允许10px的误差
+    }
+    return false;
+  };
+
   const downToBottom = () => {
     if (chatListRef.current) {
       setTimeout(() => {
         chatListRef.current?.scrollTo({
-          top: chatListRef.current.scrollHeight,
+          top: chatListRef.current.scrollHeight + 100,
           behavior: "smooth",
         });
       }, 100);
     }
   };
+
+  const throttleDownToBottom = throttle(downToBottom, 100);
 
   async function streamChat(message: string) {
     const response = await fetch("/api/chat", {
@@ -174,7 +194,6 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
       for (const line of lines) {
         if (line.startsWith("data: ")) {
-          // console.log(line);
           const data = line.replace("data: ", "");
           if (data === "[DONE]") {
             // 流结束
@@ -185,8 +204,6 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
               createdAt: Date.now(),
             };
             setCurChat("");
-            setChatList((prev) => [...prev, message]);
-            
             addMessage(session_id, message);
             downToBottom();
           } else {
@@ -197,7 +214,10 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                 setCurChat((prev) => prev + content);
                 messgae += content;
               }
-              // 在这里处理接收到的内容，例如更新UI
+              // 如果内容滑到了底部，就一直往底下滚动
+              if (isScrolledToBottom()) {
+                throttleDownToBottom();
+              }
             } catch (error) {
               console.error("解析JSON时出错:", error);
               setCurChat("");
@@ -221,6 +241,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     };
     setChatList((prev) => [...prev, message]);
     addMessage(session_id, message);
+    setContent("");
     streamChat(content);
   };
 
@@ -237,7 +258,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
               className="py-1 px-2 flex items-center gap-1 cursor-pointer rounded-lg hover:bg-amber-900/10 relative"
               onClick={() => setShowModify(!showModify)}
             >
-              {t.title}
+              {session.title}
               <DownOutlined className="text-sm" />
               <div
                 className={`absolute whitespace-nowrap top-full left-1/2 -translate-x-1/2 translate-y-1 bg-amber-600/10 flex flex-col items-center border border-amber-600/50 rounded-lg justify-center gap-1 p-1 text-sm
@@ -265,15 +286,15 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       <main className="flex-1 flex flex-col px-4  mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5 ">
         {/* 聊天记录 */}
         <div
-          className="flex-1 overflow-y-auto scrollbar flex w-full box-border px-2"
+          className="flex-1 overflow-y-auto scrollbar flex w-full box-border px-2 my-5"
           ref={chatListRef}
         >
           <div className="max-w-3xl mx-auto flex flex-col gap-5 items-start w-full">
-            {chatList.map((item, index) => {
+            {chatList.map((item) => {
               if (item.role === "user") {
                 return (
                   <SelfMessage
-                    key={index}
+                    key={item.id}
                     content={item.content}
                     avatar={
                       "https://avatars.githubusercontent.com/u/103247417?v=4"
@@ -284,7 +305,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                   />
                 );
               } else {
-                return <AssistantMsg key={index} content={item.content} />;
+                return <AssistantMsg key={item.id} content={item.content} />;
               }
             })}
             {curChat && curChat.trim() !== "" && (
@@ -293,13 +314,13 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
           </div>
         </div>
         {/* 底部输入框 */}
-        <div className="w-full  gap-3 flex flex-col relative z-10 max-w-3xl mx-auto">
+        <div className="w-full  gap-3 flex flex-col relative z-10 max-w-[800px] mx-auto">
           <div className="relative p-5 pb-3 pr-12 bg-white rounded-2xl border-2 border-gray-300 border-b-0 rounded-b-none flex flex-col gap-2">
             <div className="w-full">
               <textarea
                 ref={textareaRef}
                 value={content}
-                onChange={handleChange}
+                onChange={handleEditChange}
                 className="w-full outline-none scrollbar-thin scrollbar-thumb-orange-200 scrollbar-track-transparent resize-none bg-transparent scrollbar"
                 placeholder={t.new.placeholder}
                 rows={1}

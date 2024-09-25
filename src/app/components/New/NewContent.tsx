@@ -54,9 +54,18 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
       return;
     }
     let curMsg = content;
+    const imgExt = ["png", "jpg", "jpeg", "gif", "bmp", "webp"];
     if (fileList.length != 0) {
       curMsg += fileUrlList
-        .map((item) => `[${item.filename}](${item.url})`)
+        .map((item) => {
+          // 找出图片
+          const fileExt = item.filename.split(".").pop();
+          if (fileExt && imgExt.includes(fileExt)) {
+            return `![${item.filename}](${item.url})`;
+          } else {
+            return `[${item.filename}](${item.url})`;
+          }
+        })
         .join("\n");
     }
     const curSessionId = uuid();
@@ -129,6 +138,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         } catch (error) {
           console.error("上传错误:", error);
           message.error(`${file.name} 上传出错`);
+          setFileList((prev) => prev.filter((f) => f !== file));
           setSendFileLoading(false);
         }
       }

@@ -41,7 +41,7 @@ export default function Slider({ t }: Slider.SlideProps) {
 
   const { user, getUserFromLocal } = useUserStore();
   const { getSettingFromLocal } = useSettingStore();
-  const { chatData, getSessionFromLocal } = useSessionStore();
+  const { chatData, getSessionFromLocal, getReversedChatData } = useSessionStore();
 
   const popoverSetting = [
     {
@@ -224,7 +224,7 @@ export default function Slider({ t }: Slider.SlideProps) {
                     </div>
                   )}
                   {chatData &&
-                    chatData.reverse().slice(0, 10).map((item) => {
+                    getReversedChatData().slice(0, 10).map((item) => {
                       return (
                         <Link href={`/chat/${item.id}`} key={item.id}>
                           <div className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group">

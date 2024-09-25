@@ -27,28 +27,32 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             const match = /language-(\w+)/.exec(className || "");
             const codeString = String(children).replace(/\n$/, "");
             return !inline && match ? (
-              <div style={{ position: 'relative', marginBottom: '1em' }}>
-                <div style={{
-                  backgroundColor: '#2d2d2d',
-                  padding: '8px',
-                  borderTopLeftRadius: '5px',
-                  borderTopRightRadius: '5px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <span style={{ color: '#e6e6e6', fontSize: '12px' }}>{match[1]}</span>
+              <div style={{ position: "relative", marginBottom: "1em" }}>
+                <div
+                  style={{
+                    backgroundColor: "#2d2d2d",
+                    padding: "8px",
+                    borderTopLeftRadius: "5px",
+                    borderTopRightRadius: "5px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <span style={{ color: "#e6e6e6", fontSize: "12px" }}>
+                    {match[1]}
+                  </span>
                   <button
                     onClick={() => copyToClipboard(codeString)}
                     style={{
-                      backgroundColor: 'transparent',
-                      color: '#e6e6e6',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '12px',
+                      backgroundColor: "transparent",
+                      color: "#e6e6e6",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: "12px",
                     }}
                   >
-                    {copiedText === codeString ? <CheckOutlined /> : '复制'}
+                    {copiedText === codeString ? <CheckOutlined /> : "复制"}
                   </button>
                 </div>
                 <SyntaxHighlighter
@@ -59,16 +63,17 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                     margin: 0,
                     borderTopLeftRadius: 0,
                     borderTopRightRadius: 0,
-                    borderBottomLeftRadius: '5px',
-                    borderBottomRightRadius: '5px',
-                    padding: '1em',
-                    fontSize: '14px',
-                    backgroundColor: '#1E1E1E',
+                    borderBottomLeftRadius: "5px",
+                    borderBottomRightRadius: "5px",
+                    padding: "1em",
+                    fontSize: "14px",
+                    backgroundColor: "#1E1E1E",
                   }}
                   codeTagProps={{
                     style: {
-                      fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-                    }
+                      fontFamily:
+                        'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
+                    },
                   }}
                   {...props}
                 >
@@ -86,9 +91,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           },
           ol({ children }) {
             return <ol className="list-decimal pl-6 my-4">{children}</ol>;
-          },
-          li({ children }) {
-            return <li className="mb-2">{children}</li>;
           },
         }}
       >

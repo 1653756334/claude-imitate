@@ -100,6 +100,11 @@ export const useSessionStore = create<Store.SessionState & Store.SessionAction>(
   (set, get) => ({
     chatData: [],
     curMsg: "",
+    getReversedChatData: () => {
+      const chatData = get().chatData;
+      const reversedChatData = chatData.sort((a, b) => b.createdAt - a.createdAt);
+      return reversedChatData;
+    },
     addMessage: (sessionId: string, message: Global.ChatItem) =>
       set((state) => {
         const session = state.chatData.find((session) => session.id === sessionId);
@@ -118,6 +123,15 @@ export const useSessionStore = create<Store.SessionState & Store.SessionAction>(
           );
           localStorage.setItem("sessions", JSON.stringify(state.chatData));
         }
+        return { chatData: state.chatData };
+      }),
+    renameSession: (id: string, title: string) =>
+      set((state) => {
+        const session = state.chatData.find((session) => session.id === id);
+        if (session) {
+          session.title = title;
+        }
+        localStorage.setItem("sessions", JSON.stringify(state.chatData));
         return { chatData: state.chatData };
       }),
     addSession: (id: string, title: string) =>

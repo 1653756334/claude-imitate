@@ -10,67 +10,22 @@ import Link from "next/link";
 
 import { IconProvider } from "@/app/components/IconProvider";
 import Comfirm from "@/app/components/Comfirm";
-
-const history = [
-  {
-    id: "1",
-    title:
-      "如何使用人工智能优化工作流程vwbvwrjnvewkhvuinrejibnrebnrejknrbejkew",
-  },
-  {
-    id: "2",
-    title: "机器学习在金融领域的应用",
-  },
-  {
-    id: "3",
-    title: "深度学习模型训练技巧",
-  },
-  {
-    id: "4",
-    title: "自然语言处理在客户服务中的运用",
-  },
-  {
-    id: "5",
-    title: "计算机视觉技术在安防系统中的应用",
-  },
-  {
-    id: "6",
-    title: "区块链技术如何改变供应链管理",
-  },
-  {
-    id: "7",
-    title: "大数据分析在市场营销中的作用",
-  },
-  {
-    id: "8",
-    title: "物联网设备的安全性问题及解决方案",
-  },
-  {
-    id: "9",
-    title: "云计算技术在企业中的实施策略",
-  },
-  {
-    id: "10",
-    title: "人工智能伦理问题探讨",
-  },
-  {
-    id: "11",
-    title: "5G技术对智能城市建设的影响",
-  },
-  {
-    id: "12",
-    title: "量子计算机的发展现状与未来展望",
-  },
-];
+import { useSessionStore } from "@/app/lib/store";
+import { debounce } from "@/app/lib/utils";
 
 export default function RecentsContent({ t }: Recents.RecentsContentProps) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [historyData, setHistoryData] = useState<Slider.HistoryData[]>([]);
   const [comfirmVisible, setComfirmVisible] = useState(false);
+  const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
+
+  const { getReversedChatData, deleteSession } = useSessionStore();
+
+  const chatData = getReversedChatData();
 
   useEffect(() => {
-    setHistoryData(history);
-  }, []);
+    setHistoryData(chatData);
+  }, [chatData]);
 
   const handleSelectItem = (
     e: React.MouseEvent<HTMLDivElement>,
@@ -85,7 +40,23 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
   };
 
   const handleMultiDelete = () => {
+    selectedItems.forEach((id) => {
+      deleteSession(id);
+    });
     setSelectedItems([]);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.trim() === "") {
+      setHistoryData(chatData);
+      return;
+    }
+    setHistoryData(
+      historyData.filter((item) =>
+        item.title.toLowerCase().includes(value.toLowerCase())
+      )
+    );
   };
 
   return (
@@ -121,6 +92,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
             </div>
             <input
               placeholder={t.recents.search}
+              onChange={debounce(handleSearchChange, 500)}
               className="flex-1 h-full rounded-md decoration-none outline-none bg-transparent"
             />
           </div>
@@ -178,20 +150,20 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
             )}
           </div>
           {/* 历史对话记录 */}
-          <ul className="flex flex-col gap-2 ">
+
+          <ul className="flex flex-col gap-2 text-gray">
             {historyData ? (
               historyData.map((item) => (
                 <li className="list-none relative group" key={item.id}>
                   <Link href={`/chat/${item.id}`}>
                     <div
                       className={`flex group relative gap-2 p-4 pl-5 flex-col justify-between h-20 rounded-xl hover:bg-white/60 border border-gray-300 shadow-sm 
-                      
-                    ${
-                      selectedItems.length != 0 &&
-                      selectedItems.includes(item.id)
-                        ? "border-blue-300 bg-blue-300/20"
-                        : ""
-                    }`}
+                        ${
+                          selectedItems.length != 0 &&
+                          selectedItems.includes(item.id)
+                            ? "border-blue-300 bg-blue-300/20"
+                            : ""
+                        }`}
                       style={{ maxWidth: "calc(100vw - 1.5rem)" }}
                     >
                       <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
@@ -231,6 +203,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                     title="删除"
                     onClick={() => {
                       setComfirmVisible(true);
+                      setDeleteSessionId(item.id);
                     }}
                   >
                     <DeleteOutlined />
@@ -248,9 +221,13 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
         content={t.recents.delete_content}
         onCancel={() => {
           setComfirmVisible(false);
+          setDeleteSessionId(null);
         }}
         onConfirm={() => {
           setComfirmVisible(false);
+          if (deleteSessionId) {
+            deleteSession(deleteSessionId);
+          }
         }}
         visible={comfirmVisible}
         yesText={t.confirm.yes}
