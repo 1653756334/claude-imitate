@@ -91,7 +91,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
   return (
     <div className="min-h-full w-full min-w-0 flex-1 text-gray-800/90 h-screen overflow-y-auto scrollbar max-md:pl-3">
       <header
-        className={`flex h-12 w-full items-center md:justify-between max-md:justify-center gap-4 pr-3 pt-0.5 md:pl-8 lg:pl-12`}
+        className={`flex h-12 w-full items-center md:justify-between max-md:justify-center gap-4 pr-3 pt-0.5 md:pl-20 lg:pl-24`}
       >
         <h1 className="flex items-center gap-2 font-bold">
           <div className="">

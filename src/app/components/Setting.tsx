@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Slider, Dropdown, Button, InputNumber, Input } from "antd";
+import { Slider, Dropdown, Button, InputNumber, Input, Select } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 
@@ -12,19 +12,9 @@ interface SettingProps {
 export default function Setting({ t }: SettingProps) {
   const { settings, saveOneSettingToLocal } = useSettingStore();
 
-  const modelOptions = [
-    { key: "gpt-3.5-turbo", label: "gpt-3.5-turbo" },
-    { key: "gpt-4o", label: "gpt-4o" },
-    { key: "gpt-4o-mini", label: "gpt-4o-mini" },
-    { key: "gpt-4-turbo", label: "gpt-4-turbo" },
-    { key: "claude-3-5-sonnet-20240620", label: "Claude 3.5 Sonnet" },
-  ];
-
-  const handleModelChange = (modelInfo: { key: string }) => {
-    const model = modelOptions.find((item) => item.key === modelInfo.key);
-    if (!model) return;
+  const handleModelChange = (model: Store.Model) => {
     saveOneSettingToLocal("currentDisplayModel", model.label);
-    saveOneSettingToLocal("currentModel", model.key);
+    saveOneSettingToLocal("currentModel", model.value);
   };
 
   return (
@@ -69,7 +59,7 @@ export default function Setting({ t }: SettingProps) {
               <Input
                 type="text"
                 value={settings.customerModels.join(",")}
-                onChange={(e) => saveOneSettingToLocal("customerModels", e.target.value.split(","))}
+                onChange={(e) => saveOneSettingToLocal("customerModels", e.target.value.split(",").map((model) => model.trim()))}
                 placeholder="model1,model2,model3"
               />
             </div>
@@ -79,18 +69,15 @@ export default function Setting({ t }: SettingProps) {
             <label className="w-1/2 text-sm font-medium text-gray-700">
               {t.setting.model}
             </label>
-            <Dropdown
-              menu={{
-                items: settings.models,
-                onClick: (e) => handleModelChange(e),
-              }}
-              trigger={["click"]}
+            <Select 
+              defaultValue={settings.currentDisplayModel}
+              optionFilterProp="label"
+              onChange={(_, option) => handleModelChange(option as Store.Model)}
+              options={settings.models}
+              showSearch
+              style={{ width: "50%" }}
             >
-              <Button>
-                {settings.currentDisplayModel}
-                <DownOutlined />
-              </Button>
-            </Dropdown>
+            </Select>
           </div>
 
           <div className="flex items-center">

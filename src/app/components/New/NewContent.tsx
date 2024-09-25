@@ -1,35 +1,39 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { IconProvider } from "@/app/components/IconProvider";
+import { useRouter } from "next/navigation";
 import {
   ArrowRightOutlined,
   ArrowUpOutlined,
   CommentOutlined,
   LinkOutlined,
+  LoadingOutlined,
   PlusOutlined,
   UpOutlined,
 } from "@ant-design/icons";
+import { v4 as uuid } from "uuid";
+
 import DropdownMenu from "@/app/components/DropDown";
 import HintText from "@/app/components/HintText";
-import { message } from "antd";
+import { Empty, message, Spin } from "antd";
 import Link from "next/link";
-import { useUserStore } from "@/app/lib/store";
+import {
+  useUserStore,
+  useSettingStore,
+  useSessionStore,
+} from "@/app/lib/store";
 
 export default function NewContent({ t }: { t: Global.Dictionary }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState("");
   const [fileList, setFileList] = useState<File[]>([]);
+  const [fileUrlList, setFileUrlList] = useState<New.FileItem[]>([]);
+  const [sendFileLoading, setSendFileLoading] = useState(false);
   const [showRecents, setShowRecents] = useState(true);
-  const [model, setModel] = useState("gpt-4-1106-preview");
-
+  const router = useRouter();
+  const { settings, saveOneSettingToLocal } = useSettingStore();
   const { user } = useUserStore();
-
-  const dropdownItems = [
-    { label: "gpt-4-1106-preview" },
-    { label: "gpt-4o" },
-    { label: "gpt-4o-mini" },
-    { label: "claude-3-5-sonnet-20240620" },
-  ];
+  const { chatData, addSession, addMessage, setCurMsg } = useSessionStore();
 
   const adjustHeight = () => {
     const textarea = textareaRef.current;
@@ -45,19 +49,95 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
     }
   };
 
-  const onAddFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const sendMessageAction = () => {
+    if (content.trim() == "") {
+      return;
+    }
+    let curMsg = content;
+    if (fileList.length != 0) {
+      curMsg += fileUrlList
+        .map((item) => `[${item.filename}](${item.url})`)
+        .join("\n");
+    }
+    let curSessionId = uuid();
+    addSession(curSessionId, curMsg);
+    addMessage(curSessionId, {
+      role: "user",
+      content: curMsg,
+      id: uuid(),
+      createdAt: Date.now(),
+    });
+    setContent("");
+    setFileList([]);
+    setFileUrlList([]);
+    setCurMsg(curMsg);
+    router.push(`/chat/${curSessionId}`);
+  };
+
+  const sendMessage = (
+    e: React.KeyboardEvent | React.MouseEvent<HTMLDivElement>
+  ) => {
+    if (
+      e.type === "keydown" &&
+      (e as React.KeyboardEvent).key === "Enter" &&
+      !(e as React.KeyboardEvent).shiftKey
+    ) {
+      e.preventDefault();
+      sendMessageAction();
+      // 在这里添加发送消息的逻辑
+    } else if (e.type === "click") {
+      sendMessageAction();
+      // 在这里添加发送消息的逻辑
+    }
+  };
+
+  const onAddFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       if (files.length + fileList.length > 5) {
         message.error(t.new.max5);
         return;
       }
-      setFileList((prev) => [...prev, ...files]);
+
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file, file.name);
+        setFileList((prev) => [...prev, file]);
+        setSendFileLoading(true);
+        try {
+          const response = await fetch(
+            "https://filesystem.site/api/file/upload/sk-8ngdrP1oppnNeV9lWIb2rCsH3TfvY4MjrGqNWKhAepPZ2iEy",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (response.ok) {
+            const result = await response.json();
+            setFileUrlList((prev) => [
+              ...prev,
+              { filename: file.name, url: result.data.url },
+            ]);
+            setSendFileLoading(false);
+          } else {
+            setFileList((prev) => prev.filter((f) => f !== file));
+            console.error("文件上传失败");
+            message.error(`${file.name} 上传失败`);
+            setSendFileLoading(false);
+          }
+        } catch (error) {
+          console.error("上传错误:", error);
+          message.error(`${file.name} 上传出错`);
+          setSendFileLoading(false);
+        }
+      }
     }
   };
 
-  const chooseModel = (model: string) => {
-    setModel(model);
+  const chooseModel = (item: Store.Model) => {
+    saveOneSettingToLocal("currentModel", item.value);
+    saveOneSettingToLocal("currentDisplayModel", item.label);
   };
 
   const onRemoveFile = (file: File) => {
@@ -91,7 +171,10 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         </h1>
       </div>
       {/* 输入框 */}
-      <div className="w-full  gap-3 flex flex-col shadow-orange-700/30 drop-shadow-xl relative z-10">
+      <div
+        className="w-full  gap-3 flex flex-col shadow-orange-700/30 drop-shadow-xl relative z-10"
+        onKeyDown={sendMessage}
+      >
         <div className="relative p-5 pr-12 bg-white rounded-2xl border border-gray-200">
           <div className="w-full">
             <textarea
@@ -106,18 +189,19 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
           <div className="text-sm relative z-10">
             <div className="">
               <DropdownMenu
-                items={dropdownItems}
-                callback={(item) => {
-                  chooseModel(item.label);
-                }}
+                items={settings.models}
+                callback={(item) => chooseModel(item)}
                 width="100px"
               >
-                {model}
+                {settings.currentDisplayModel}
               </DropdownMenu>
             </div>
           </div>
         </div>
-        <div className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white">
+        <div
+          className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white"
+          onClick={sendMessage}
+        >
           <ArrowUpOutlined />
         </div>
         {/* 文件上传 */}
@@ -158,31 +242,36 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
               return (
                 <div key={fullFilename} className="flex-shrink-0">
                   <HintText hintText={fullFilename} more={5}>
-                    <div
-                      className={`h-20 cursor-pointer relative w-full p-2 rounded-lg text-md text-gray-700 flex items-center justify-center hover:border hover:border-blue-300
-										 drop-shadow-md shadow-blue-400`}
-                      style={{
-                        background:
-                          "linear-gradient(to bottom, white, #e6f7ff)",
-                      }}
+                    <Spin
+                      spinning={sendFileLoading}
+                      indicator={<LoadingOutlined spin />}
                     >
-                      <div className="font-bold text-blue-500/80 truncate -translate-y-1">
-                        {fileName}
-                      </div>
                       <div
-                        className={`absolute -bottom-2 bg-blue-500/90 drop-shadow-lg shadow-blue-400 h-5 rounded-lg px-3 py-1
+                        className={`h-20 cursor-pointer relative w-full p-2 rounded-lg text-md text-gray-700 flex items-center justify-center hover:border hover:border-blue-300
+										 drop-shadow-md shadow-blue-400`}
+                        style={{
+                          background:
+                            "linear-gradient(to bottom, white, #e6f7ff)",
+                        }}
+                      >
+                        <div className="font-bold text-blue-500/80 truncate -translate-y-1">
+                          {fileName}
+                        </div>
+                        <div
+                          className={`absolute -bottom-2 bg-blue-500/90 drop-shadow-lg shadow-blue-400 h-5 rounded-lg px-3 py-1
 											 text-white justify-center items-center flex font-bold text-xs`}
-                      >
-                        {fileExt}
-                      </div>
-                      <div
-                        className={`absolute -top-2 -left-2 w-5 h-5 p-1  bg-orange-200 flex items-center justify-center text-gray-500 rounded-full border border-gray-300
+                        >
+                          {fileExt}
+                        </div>
+                        <div
+                          className={`absolute -top-2 -left-2 w-5 h-5 p-1  bg-orange-200 flex items-center justify-center text-gray-500 rounded-full border border-gray-300
 												hover:bg-orange-700 hover:text-white transition-all duration-300 rotate-45 font-bold`}
-                        onClick={() => onRemoveFile(file)}
-                      >
-                        <PlusOutlined />
+                          onClick={() => onRemoveFile(file)}
+                        >
+                          <PlusOutlined />
+                        </div>
                       </div>
-                    </div>
+                    </Spin>
                   </HintText>
                 </div>
               );
@@ -215,38 +304,47 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
           </div>
           <Link href="/recents">
             <div className="flex items-center gap-1 group cursor-pointer font-medium">
-              <span className="group-hover:underline">
-                {t.new.show_all}
-              </span>
+              <span className="group-hover:underline">{t.new.show_all}</span>
               <span className="scale-85">
                 <ArrowRightOutlined className="text-sm" />
               </span>
             </div>
           </Link>
         </div>
-        <div className="grid grid-cols-3 gap-4 mt-4 overflow-hidden">
-          {[...Array(6)].map((_, index) => (
-            <Link href={`/chat/${index}`} key={index}>
-              <div
-                key={index}
-                className={`flex flex-col justify-between cursor-pointer p-3 border rounded-md shadow-sm hover:drop-shadow-md
+        <div
+          className={` mt-4 overflow-hidden ${
+            chatData.length == 0 ? "h-[200px]" : "grid grid-cols-3 gap-4"
+          }`}
+        >
+          {chatData.length == 0 && (
+            <Empty
+              description={t.slider.no_history}
+              style={{ width: "100%", height: "100%" }}
+            />
+          )}
+          {chatData.length != 0 &&
+            chatData.slice(0, 6).map((item, index) => (
+              <Link href={`/chat/${item.id}`} key={item.id}>
+                <div
+                  key={index}
+                  className={`flex flex-col justify-between cursor-pointer p-3 border rounded-md shadow-sm hover:drop-shadow-md
               border-gray-200 bg-gradient-to-b from-white/30 to-white/10 hover:from-white/80 hover:to-white/10 transition-all duration-300 ease-in-out
               ${
                 showRecents
                   ? "max-h-[200px] opacity-100"
                   : "max-h-0 opacity-0 overflow-hidden"
               }`}
-              >
-                <div className="">
-                  <CommentOutlined />
+                >
+                  <div className="">
+                    <CommentOutlined />
+                  </div>
+                  <div className="mt-2 text-sm font-medium truncate">
+                    {item.title}
+                  </div>
+                  <div className="mt-2 text-xs text-gray-500">时间</div>
                 </div>
-                <div className="mt-2 text-sm font-medium truncate">
-                  内容 {index + 1}
-                </div>
-                <div className="mt-2 text-xs text-gray-500">时间</div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
         </div>
       </div>
     </div>

@@ -10,7 +10,8 @@
     "show_all": "显示所有",
     "help": "帮助和支持",
     "settings": "设置",
-    "logout": "退出"
+    "logout": "退出",
+    "no_history": "没有历史记录"
   },
   "recents": {
     "title": "历史记录",

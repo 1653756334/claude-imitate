@@ -17,22 +17,30 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
     getSettingFromLocal: () => {
       const setting = localStorage.getItem("setting");
       if (setting) {
-        // const newSetting = JSON.parse(setting);
-        // if (newSetting.models && newSetting.models.length == 0) {
-        //   newSetting.models = [
-        //     { key: "gpt-4-1106-preview", label: "gpt-4-1106-preview" },
-        //     { key: "gpt-4o", label: "gpt-4o" },
-        //     { key: "gpt-4o-mini", label: "gpt-4o-mini" },
-        //     { key: "claude-3-5-sonnet-20240620", label: "claude-3-5-sonnet-20240620" },
-        //   ];
-        // }
         set((state) => {
-          const newSetting = { ...state.settings, ...JSON.parse(setting) } as Store.Setting;
-          newSetting.models = DEFAULT_MODEL_LIST;
-          const modelsToAdd = DEFAULT_MODEL_LIST.filter(defaultModel => 
-            !newSetting.models.some(existingModel => existingModel.key === defaultModel.key)
-          );
-          newSetting.models = newSetting.models.concat(modelsToAdd);
+          const newSetting = {
+            ...state.settings,
+            ...JSON.parse(setting),
+          } as Store.Setting;
+
+          // 合并默认模型列表和用户自定义模型列表
+          const customerModels = newSetting.customerModels
+            .filter((model) => model.trim() !== "")
+            .map((model) => ({ label: model, value: model }));
+
+          // 添加customer model 并去重
+          newSetting.models = newSetting.models
+            .concat(customerModels)
+            .filter(
+              (model, index, self) =>
+                index === self.findIndex((t) => t.value === model.value)
+            );
+          localStorage.setItem("setting", JSON.stringify(newSetting));
+          return { settings: newSetting };
+        });
+      } else {
+        set((state) => {
+          const newSetting = { ...state.settings, models: DEFAULT_MODEL_LIST };
           localStorage.setItem("setting", JSON.stringify(newSetting));
           return { settings: newSetting };
         });
@@ -45,9 +53,21 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
         return { settings: newSetting };
       });
     },
-    saveOneSettingToLocal: <K extends keyof Store.Setting>(key: K, value: Store.Setting[K]) => {
+    saveOneSettingToLocal: <K extends keyof Store.Setting>(
+      key: K,
+      value: Store.Setting[K]
+    ) => {
       set((state) => {
         const newSetting = { ...state.settings, [key]: value };
+        if (key === "customerModels") {
+          let valueToAdd = (value as string[])
+            .filter((model) => model.trim() !== "")
+            .map((model) => ({ label: model, value: model }));
+          newSetting.models = DEFAULT_MODEL_LIST.concat(valueToAdd).filter(
+            (model, index, self) =>
+              index === self.findIndex((t) => t.value === model.value)
+          );
+        }
         localStorage.setItem("setting", JSON.stringify(newSetting));
         return { settings: newSetting };
       });
@@ -77,48 +97,58 @@ export const useUserStore = create<Store.UserState & Store.UserAction>(
 );
 
 export const useSessionStore = create<Store.SessionState & Store.SessionAction>(
-  (set) => ({
-    data: [],
-    addMessage: (sessionId: string, message: Store.Message) =>
+  (set, get) => ({
+    chatData: [],
+    curMsg: "",
+    addMessage: (sessionId: string, message: Global.ChatItem) =>
       set((state) => {
-        const session = state.data.find((session) => session.id === sessionId);
+        const session = state.chatData.find((session) => session.id === sessionId);
         if (session) {
           session.messages.push(message);
         }
-        return { data: state.data };
+        localStorage.setItem("sessions", JSON.stringify(state.chatData));
+        return { chatData: state.chatData };
       }),
     deleteMessage: (id: string, messageId: string) =>
       set((state) => {
-        const session = state.data.find((session) => session.id === id);
+        const session = state.chatData.find((session) => session.id === id);
         if (session) {
           session.messages = session.messages.filter(
             (message) => message.id !== messageId
           );
+          localStorage.setItem("sessions", JSON.stringify(state.chatData));
         }
-        return { data: state.data };
+        return { chatData: state.chatData };
       }),
-    addSession: (id: string) =>
+    addSession: (id: string, title: string) =>
       set((state) => {
-        state.data.push({ id, messages: [] });
-        return { data: state.data };
+        state.chatData.push({ id, title, messages: [], createdAt: Date.now() });
+        localStorage.setItem("sessions", JSON.stringify(state.chatData));
+        return { chatData: state.chatData };
       }),
     deleteSession: (id: string) =>
       set((state) => {
-        state.data = state.data.filter((session) => session.id !== id);
-        return { data: state.data };
+        state.chatData = state.chatData.filter((session) => session.id !== id);
+        localStorage.setItem("sessions", JSON.stringify(state.chatData));
+        return { chatData: state.chatData };
       }),
     saveSessionToLocal: () =>
       set((state) => {
-        localStorage.setItem("sessions", JSON.stringify(state.data));
-        return { data: state.data };
+        localStorage.setItem("sessions", JSON.stringify(state.chatData));
+        return { chatData: state.chatData };
       }),
     getSessionFromLocal: () =>
       set((state) => {
         const sessions = localStorage.getItem("sessions");
         if (sessions) {
-          state.data = JSON.parse(sessions);
+          state.chatData = JSON.parse(sessions);
         }
-        return { data: state.data };
+        return { chatData: state.chatData };
       }),
+    getSessionById: (id: string) => {
+      const sessions = get().chatData;
+      return sessions.find((session) => session.id === id);
+    },
+    setCurMsg: (msg: string) => set(() => ({ curMsg: msg })),
   })
 );

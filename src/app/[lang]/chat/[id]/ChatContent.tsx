@@ -5,6 +5,8 @@ import {
   DownOutlined,
 } from "@ant-design/icons";
 import React, { useRef, useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { v4 as uuid } from "uuid";
 
 import OutsideClickHandler from "@/app/components/OutsideClickHandler";
 import Confirm from "@/app/components/Comfirm";
@@ -12,14 +14,22 @@ import Modify from "@/app/components/Modify";
 import DropdownMenu from "@/app/components/DropDown";
 import SelfMessage from "@/app/components/SelfMessage";
 import AssistantMsg from "@/app/components/AssistantMsg";
+import { useSettingStore, useSessionStore } from "@/app/lib/store";
 
 export default function ChatContent({ t }: Chat.ChatContentProps) {
+  const pathname = usePathname();
+  const session_id = pathname.split("/").slice(-1)[0];
   const [showModify, setShowModify] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [curChat, setCurChat] = useState<string>("");
   const [content, setContent] = useState("");
-  const [model, setModel] = useState("gpt-4-1106-preview");
-  const [chatList, setChatList] = useState<Chat.ChatItem[]>([]);
+  const [chatList, setChatList] = useState<Global.ChatItem[]>([]);
+  const chatListRef = useRef<HTMLDivElement>(null);
+  const { settings, saveOneSettingToLocal } = useSettingStore();
+  const { setCurMsg, curMsg, getSessionById, addMessage, deleteSession } =
+    useSessionStore();
+
+  const router = useRouter();
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
@@ -28,10 +38,6 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       textarea.style.height = `${Math.min(textarea.scrollHeight, 370)}px`;
     }
   };
-
-  useEffect(() => {
-    adjustTextareaHeight();
-  }, [content]);
 
   const [confirmData, setConfirmData] = useState<Comfirm.ComfirmProps>({
     title: "",
@@ -52,12 +58,31 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     noText: "",
   });
 
-  const dropdownItems = [
-    { label: "gpt-4-1106-preview" },
-    { label: "gpt-4o" },
-    { label: "gpt-4o-mini" },
-    { label: "claude-3-5-sonnet-20240620" },
-  ];
+  const hasSentMessage = useRef(false);
+
+  useEffect(() => {
+    // 先加载历史记录
+    const session = getSessionById(session_id);
+    setChatList(session?.messages || []);
+
+    // 说明从上个页面过来，需要发送
+    if (curMsg !== "" && !hasSentMessage.current) {
+      streamChat(curMsg);
+      // 标记消息已发送
+      hasSentMessage.current = true;
+      // 清除 curMsg，防止重复发送
+      setCurMsg("");
+    }
+
+    // 清理函数
+    return () => {
+      hasSentMessage.current = false;
+    };
+  }, []); // 使用空依赖数组
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [content]);
 
   const onDeleteChat = () => {
     const data = {
@@ -71,6 +96,8 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       ...data,
       onConfirm: () => {
         setConfirmData({ ...data, visible: false });
+        deleteSession(session_id);
+        router.push("/new");
       },
       onCancel: () => {
         setConfirmData({ ...data, visible: false });
@@ -103,8 +130,20 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     setContent(e.target.value);
     adjustTextareaHeight();
   };
-  const chooseModel = (model: string) => {
-    setModel(model);
+  const chooseModel = (item: Store.Model) => {
+    saveOneSettingToLocal("currentModel", item.value);
+    saveOneSettingToLocal("currentDisplayModel", item.label);
+  };
+
+  const downToBottom = () => {
+    if (chatListRef.current) {
+      setTimeout(() => {
+        chatListRef.current?.scrollTo({
+          top: chatListRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 100);
+    }
   };
 
   async function streamChat(message: string) {
@@ -122,6 +161,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
     const reader = response.body?.getReader();
     const decoder = new TextDecoder();
+    let messgae = "";
 
     while (true) {
       const { done, value } = await reader!.read();
@@ -138,13 +178,23 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
           const data = line.replace("data: ", "");
           if (data === "[DONE]") {
             // 流结束
+            const message = {
+              role: "assistant" as const,
+              content: messgae,
+              id: uuid(),
+              createdAt: Date.now(),
+            };
+            setCurChat("");
+            setChatList((prev) => [...prev, message]);
+            addMessage(session_id, message);
+            downToBottom();
           } else {
             try {
               const parsed = JSON.parse(data);
               const content = parsed.choices[0].delta.content;
-              console.log(content);
               if (content) {
                 setCurChat((prev) => prev + content);
+                messgae += content;
               }
               // 在这里处理接收到的内容，例如更新UI
             } catch (error) {
@@ -160,7 +210,15 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     if (content.trim() === "") {
       return;
     }
-    setChatList((prev) => [...prev, { role: "user", content }]);
+    downToBottom();
+    const message = {
+      role: "user" as const,
+      content,
+      id: uuid(),
+      createdAt: Date.now(),
+    };
+    setChatList((prev) => [...prev, message]);
+    addMessage(session_id, message);
     streamChat(content);
   };
 
@@ -204,7 +262,10 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       </header>
       <main className="flex-1 flex flex-col px-4 max-w-3xl mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5">
         {/* 聊天记录 */}
-        <div className="flex-1 overflow-y-auto scrollbar flex flex-col gap-5">
+        <div
+          className="flex-1 overflow-y-auto scrollbar flex flex-col gap-5"
+          ref={chatListRef}
+        >
           {chatList.map((item, index) => {
             if (item.role === "user") {
               return (
@@ -248,14 +309,14 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             <div className="text-sm relative z-10">
               <div className="">
                 <DropdownMenu
-                  items={dropdownItems}
+                  items={settings.models}
                   callback={(item) => {
-                    chooseModel(item.label);
+                    chooseModel(item);
                   }}
                   width="100px"
                   position="top"
                 >
-                  {model}
+                  {settings.currentDisplayModel}
                 </DropdownMenu>
               </div>
             </div>

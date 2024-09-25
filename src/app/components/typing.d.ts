@@ -37,6 +37,7 @@ declare namespace Modify {
 declare namespace DropDown {
   interface DropdownItem {
     label: string;
+    value: string;
   }
   
   interface DropdownMenuProps {

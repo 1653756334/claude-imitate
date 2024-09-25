@@ -19,72 +19,19 @@ import {
   useUserStore,
   useSettingStore,
 } from "@/app/lib/store";
+import { Empty } from "antd";
 
 const playpen_Sans = Jacques_Francois({
   subsets: ["latin"],
   weight: ["400"],
 });
 
-const history = [
-  {
-    id: "1",
-    title: "如何使用人工智能优化工作流程vwbvwrjnvewkhvuiew",
-  },
-  {
-    id: "2",
-    title: "机器学习在金融领域的应用",
-  },
-  {
-    id: "3",
-    title: "深度学习模型训练技巧",
-  },
-  {
-    id: "4",
-    title: "自然语言处理在客户服务中的运用",
-  },
-  {
-    id: "5",
-    title: "计算机视觉技术在安防系统中的应用",
-  },
-  {
-    id: "6",
-    title: "区块链技术如何改变供应链管理",
-  },
-  {
-    id: "7",
-    title: "大数据分析在市场营销中的作用",
-  },
-  {
-    id: "8",
-    title: "物联网设备的安全性问题及解决方案",
-  },
-  {
-    id: "9",
-    title: "云计算技术在企业中的实施策略",
-  },
-  {
-    id: "10",
-    title: "人工智能伦理问题探讨",
-  },
-  {
-    id: "11",
-    title: "5G技术对智能城市建设的影响",
-  },
-  {
-    id: "12",
-    title: "量子计算机的发展现状与未来展望",
-  },
-];
-
 export default function Slider({ t }: Slider.SlideProps) {
   const path = usePathname();
-  const router = useRouter();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
-  const [historyData, setHistoryData] = useState<Slider.HistoryData[] | null>(
-    null
-  );
+
   const [showUserInfo, setShowUserInfo] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
 
@@ -93,9 +40,9 @@ export default function Slider({ t }: Slider.SlideProps) {
   const titleRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
-  const { user, setUserToLocal, getUserFromLocal } = useUserStore();
+  const { user, getUserFromLocal } = useUserStore();
   const { getSettingFromLocal } = useSettingStore();
-  const { data } = useSessionStore();
+  const { chatData, getSessionFromLocal } = useSessionStore();
 
   const popoverSetting = [
     {
@@ -139,11 +86,12 @@ export default function Slider({ t }: Slider.SlideProps) {
 
   useEffect(() => {
     const isPinned = localStorage.getItem("isPinned");
-    setHistoryData(history.slice(0, 10));
+    getSessionFromLocal();
+    getSettingFromLocal();
+    getUserFromLocal();
     if (isPinned === "true") {
       setIsPinned(true);
     }
-    getSettingFromLocal();
   }, [path]);
 
   const handleSpin = () => {
@@ -271,8 +219,13 @@ export default function Slider({ t }: Slider.SlideProps) {
                   className="flex flex-col text-sm overflow-y-auto scrollbar gap-1"
                   style={{ height: "calc(100vh - 15rem)" }}
                 >
-                  {historyData &&
-                    historyData.map((item) => {
+                  {chatData.length == 0 && (
+                    <div className="flex items-center justify-center h-full">
+                      <Empty description={t.slider.no_history} />
+                    </div>
+                  )}
+                  {chatData &&
+                    chatData.slice(0, 10).map((item) => {
                       return (
                         <Link href={`/chat/${item.id}`} key={item.id}>
                           <div className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group">
@@ -285,14 +238,16 @@ export default function Slider({ t }: Slider.SlideProps) {
                       );
                     })}
                   {/* 查看所有 */}
-                  <Link href={"/recents"} className="gap-1 mt-3">
-                    <div className="flex h-5 font-bold cursor-pointer hover:text-black/70">
-                      <span>{t.slider.show_all}</span>
-                      <span className="w-5 h-5 text-sm flex items-center justify-center text-gray-500">
-                        <ArrowRightOutlined className="scale-90" />
-                      </span>
-                    </div>
-                  </Link>
+                  {chatData.length > 10 && (
+                    <Link href={"/recents"} className="gap-1 mt-3">
+                      <div className="flex h-5 font-bold cursor-pointer hover:text-black/70">
+                        <span>{t.slider.show_all}</span>
+                        <span className="w-5 h-5 text-sm flex items-center justify-center text-gray-500">
+                          <ArrowRightOutlined className="scale-90" />
+                        </span>
+                      </div>
+                    </Link>
+                  )}
                 </div>
               </div>
               {/* 底部区域 */}

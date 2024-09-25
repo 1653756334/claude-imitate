@@ -10,7 +10,8 @@
     "help": "Help and Support",
     "show_all": "Show All",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "no_history": "No history yet"
   },
   "recents": {
     "title": "Recents",

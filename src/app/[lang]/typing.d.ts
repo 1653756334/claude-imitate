@@ -24,6 +24,12 @@ declare namespace Global {
       [key: string]: string;
     };
   }
+  interface ChatItem {
+    role: "user" | "assistant";
+    content: string;
+    id: string;
+    createdAt: number;
+  }
 }
 
 declare namespace Recents {
@@ -32,11 +38,15 @@ declare namespace Recents {
   }
 }
 
-declare namespace Chat {
-  interface ChatItem {
-    role: "user" | "assistant";
-    content: string;
+declare namespace New {
+  interface FileItem {
+    filename: string;
+    url: string;
   }
+}
+
+declare namespace Chat {
+  
   interface ChatContentProps {
     t: Global.Dictionary;
   }
@@ -87,7 +97,7 @@ declare namespace Login {
 declare namespace Store {
   interface Model {
     label: string; // 显示的名称
-    key: string; // 实际的名称
+    value: string; // 实际的名称
   }
   interface Setting {
     baseUrl: string;
@@ -122,25 +132,24 @@ declare namespace Store {
     getUserFromLocal: () => void;
   }
 
-  interface Message {
-    id: string;
-    content: string;
-    role: "user" | "assistant";
-    createdAt: number;
-  }
   interface Session {
     id: string;
-    messages: Message[];
+    title: string;
+    messages: Global.ChatItem[];
+    createdAt: number;
   }
   interface SessionState {
-    data: Session[];
+    chatData: Session[];
+    curMsg: string;
   }
   interface SessionAction {
     addMessage: (sessionId: string, message: Message) => void;
     deleteMessage: (id: string, messageId: string) => void;
-    addSession: (id: string) => void;
+    addSession: (id: string, title: string) => void;
     deleteSession: (id: string) => void;
     saveSessionToLocal: () => void;
     getSessionFromLocal: () => void;
+    setCurMsg: (msg: string) => void;
+    getSessionById: (id: string) => Session | undefined;
   }
 }
