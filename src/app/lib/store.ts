@@ -60,7 +60,7 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
       set((state) => {
         const newSetting = { ...state.settings, [key]: value };
         if (key === "customerModels") {
-          let valueToAdd = (value as string[])
+          const valueToAdd = (value as string[])
             .filter((model) => model.trim() !== "")
             .map((model) => ({ label: model, value: model }));
           newSetting.models = DEFAULT_MODEL_LIST.concat(valueToAdd).filter(

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Slider, Dropdown, Button, InputNumber, Input, Select } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import React from "react";
+import { Slider, InputNumber, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import { useSettingStore } from "../lib/store";

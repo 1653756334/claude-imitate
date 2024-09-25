@@ -6,7 +6,6 @@ import {
 } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";

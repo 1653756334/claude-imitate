@@ -59,7 +59,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         .map((item) => `[${item.filename}](${item.url})`)
         .join("\n");
     }
-    let curSessionId = uuid();
+    const curSessionId = uuid();
     addSession(curSessionId, curMsg);
     addMessage(curSessionId, {
       role: "user",

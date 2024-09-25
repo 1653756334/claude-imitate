@@ -78,7 +78,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     return () => {
       hasSentMessage.current = false;
     };
-  }, []); // 使用空依赖数组
+  }, [session_id]); // 使用空依赖数组
 
   useEffect(() => {
     adjustTextareaHeight();
