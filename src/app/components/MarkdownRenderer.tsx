@@ -19,8 +19,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   };
 
   return (
-    <div className="markdown-content">
+    <div className="markdown-content box-border w-full">
       <ReactMarkdown
+        className="p-[0.1rem]"
         components={{
           code({ inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || "");
@@ -79,6 +80,15 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                 {children}
               </code>
             );
+          },
+          ul({ children }) {
+            return <ul className="list-disc pl-6 my-4">{children}</ul>;
+          },
+          ol({ children }) {
+            return <ol className="list-decimal pl-6 my-4">{children}</ol>;
+          },
+          li({ children }) {
+            return <li className="mb-2">{children}</li>;
           },
         }}
       >

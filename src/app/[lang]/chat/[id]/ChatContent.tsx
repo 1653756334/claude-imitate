@@ -58,7 +58,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     noText: "",
   });
 
-  const hasSentMessage = useRef(false);
+  const hasSentMessage = useRef(true);
 
   useEffect(() => {
     // 先加载历史记录
@@ -66,10 +66,10 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     setChatList(session?.messages || []);
 
     // 说明从上个页面过来，需要发送
-    if (curMsg !== "" && !hasSentMessage.current) {
+    if (curMsg !== "" && hasSentMessage.current) {
       streamChat(curMsg);
       // 标记消息已发送
-      hasSentMessage.current = true;
+      hasSentMessage.current = false;
       // 清除 curMsg，防止重复发送
       setCurMsg("");
     }
@@ -186,6 +186,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             };
             setCurChat("");
             setChatList((prev) => [...prev, message]);
+            
             addMessage(session_id, message);
             downToBottom();
           } else {
@@ -199,6 +200,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
               // 在这里处理接收到的内容，例如更新UI
             } catch (error) {
               console.error("解析JSON时出错:", error);
+              setCurChat("");
             }
           }
         }
@@ -260,36 +262,38 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
           </OutsideClickHandler>
         </div>
       </header>
-      <main className="flex-1 flex flex-col px-4 max-w-3xl mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5">
+      <main className="flex-1 flex flex-col px-4  mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5 ">
         {/* 聊天记录 */}
         <div
-          className="flex-1 overflow-y-auto scrollbar flex flex-col gap-5"
+          className="flex-1 overflow-y-auto scrollbar flex w-full box-border px-2"
           ref={chatListRef}
         >
-          {chatList.map((item, index) => {
-            if (item.role === "user") {
-              return (
-                <SelfMessage
-                  key={index}
-                  content={item.content}
-                  avatar={
-                    "https://avatars.githubusercontent.com/u/103247417?v=4"
-                  }
-                  onReEdit={() => {
-                    setContent("markdown");
-                  }}
-                />
-              );
-            } else {
-              return <AssistantMsg key={index} content={item.content} />;
-            }
-          })}
-          {curChat && curChat.trim() !== "" && (
-            <AssistantMsg content={curChat} />
-          )}
+          <div className="max-w-3xl mx-auto flex flex-col gap-5 items-start w-full">
+            {chatList.map((item, index) => {
+              if (item.role === "user") {
+                return (
+                  <SelfMessage
+                    key={index}
+                    content={item.content}
+                    avatar={
+                      "https://avatars.githubusercontent.com/u/103247417?v=4"
+                    }
+                    onReEdit={() => {
+                      setContent(item.content);
+                    }}
+                  />
+                );
+              } else {
+                return <AssistantMsg key={index} content={item.content} />;
+              }
+            })}
+            {curChat && curChat.trim() !== "" && (
+              <AssistantMsg content={curChat} />
+            )}
+          </div>
         </div>
         {/* 底部输入框 */}
-        <div className="w-full  gap-3 flex flex-col relative z-10">
+        <div className="w-full  gap-3 flex flex-col relative z-10 max-w-3xl mx-auto">
           <div className="relative p-5 pb-3 pr-12 bg-white rounded-2xl border-2 border-gray-300 border-b-0 rounded-b-none flex flex-col gap-2">
             <div className="w-full">
               <textarea

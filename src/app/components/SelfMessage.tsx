@@ -14,7 +14,7 @@ export default function SelfMessage({
   onReEdit: () => void;
 }) {
   return (
-    <div className="w-full">
+    <div className="w-full ">
       <div className="flex items-start">
         <div className="flex items-start bg-gradient-to-b from-[#eae7dc] to-[#ded8c4] rounded-lg p-2 gap-3 px-3 relative group max-w-full">
           <Image
@@ -24,7 +24,7 @@ export default function SelfMessage({
             height={24} // 对应于 h-6
             className="rounded-full flex-shrink-0"
           />
-          <div className="markdown-content border-slate-400 rounded-lg overflow-hidden break-words">
+          <div className="markdown-content border-slate-400 rounded-lg overflow-hidden break-words w-full">
             <MarkdownRenderer content={content} />
           </div>
           <div
