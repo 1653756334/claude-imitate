@@ -5,8 +5,8 @@ export async function POST(req: NextRequest) {
   try {
     const reqJson = await req.json();
 
-    let api_base = reqJson.baseUrl || process.env.OPENAI_API_BASE || "https://api.openai.com";
-    let api_key = reqJson.key || process.env.OPENAI_API_KEY;
+    const api_base = reqJson.baseUrl || process.env.OPENAI_API_BASE || "https://api.openai.com";
+    const api_key = reqJson.key || process.env.OPENAI_API_KEY;
 
     if (!api_key) {
       return NextResponse.json({ msg: { error: "api_key is not set" } }, { status: 500 });

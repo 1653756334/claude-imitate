@@ -247,7 +247,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             // 生成标题
             if (chatList.length <= 2) {
               try {
-                let res = await fetch("/api/chat-out-stream", {
+                const res = await fetch("/api/chat-out-stream", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -259,7 +259,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                       "你是一个AI助手，请根据用户的问题生成一个标题，大概十个字左右",
                   }),
                 });
-                let title = await res.json();
+                const title = await res.json();
                 renameSession(session_id, title.msg);
               } catch (e) {
                 console.log(e);

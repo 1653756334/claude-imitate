@@ -119,4 +119,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
   }
 );
 
+MarkdownRenderer.displayName = 'MarkdownRenderer';
+
 export default MarkdownRenderer;
