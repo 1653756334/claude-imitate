@@ -21,9 +21,9 @@ import {
   useUserStore,
 } from "@/app/lib/store";
 import { throttle } from "@/app/lib/utils";
-import { Spin, message as Message } from "antd";
+import { message as Message } from "antd";
 import { IconProvider } from "@/app/components/IconProvider";
-
+import HintText from "@/app/components/HintText";
 export default function ChatContent({ t }: Chat.ChatContentProps) {
   const pathname = usePathname();
   const session_id = pathname.split("/").slice(-1)[0];
@@ -33,6 +33,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
   const [content, setContent] = useState("");
   const [chatList, setChatList] = useState<Global.ChatItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const breakStreamRef = useRef(false);
 
   const chatListRef = useRef<HTMLDivElement>(null);
   const { settings, saveOneSettingToLocal } = useSettingStore();
@@ -45,6 +46,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     addMessage,
     deleteSession,
     renameSession,
+    deleteMessage
   } = useSessionStore();
 
   const router = useRouter();
@@ -177,8 +179,9 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
   const throttleDownToBottom = throttle(downToBottom, 50);
 
-  async function streamChat() {
+  async function streamChat(message?: Global.ChatItem) {
     setLoading(true);
+    breakStreamRef.current = false;
     let historyMsgList: Global.ChatItem[] = [];
     const systemPrompt = settings.sysPrompt;
     if (chatList.length > 0) {
@@ -220,11 +223,25 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     let messgae = "";
 
     while (true) {
-      const { done, value } = await reader!.read();
-      if (done) {
+      if (breakStreamRef.current) {
+        reader?.cancel();
+        setLoading(false);
+        breakStreamRef.current = false;
+        setCurChat("");
+        if (message) { 
+          deleteMessage(session_id, message.id);
+        } else {
+          deleteSession(session_id);
+          router.push("/new");
+        }
         break;
       }
+      const { done, value } = await reader!.read();
 
+      if (done) {
+        setLoading(false);
+        break;
+      }
       const chunk = decoder.decode(value);
       const lines = chunk.split("\n");
 
@@ -243,7 +260,6 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             addMessage(session_id, message);
             downToBottom();
             setLoading(false);
-
             // 生成标题
             if (chatList.length <= 2) {
               try {
@@ -254,9 +270,16 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                   },
                   body: JSON.stringify({
                     model: "gpt-4o-mini",
-                    historyMsgList,
+                    historyMsgList: [
+                      ...historyMsgList,
+                      {
+                        role: "user",
+                        content:
+                          "你是一个AI助手，请根据用户的问题生成一个标题，只需要十个字左右",
+                      },
+                    ],
                     systemPrompt:
-                      "你是一个AI助手，请根据用户的问题生成一个标题，大概十个字左右",
+                      "你是一个AI助手，请根据用户的问题生成一个标题，只需要十个字左右",
                   }),
                 });
                 const title = await res.json();
@@ -281,7 +304,6 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             } catch (error) {
               console.error("解析JSON时出错:", error);
               setCurChat("");
-              setLoading(false);
             }
           }
         }
@@ -303,7 +325,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     };
     addMessage(session_id, message);
     setContent("");
-    streamChat();
+    streamChat(message);
   };
 
   return (
@@ -316,10 +338,12 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
           </div>
           <OutsideClickHandler onOutsideClick={() => setShowModify(false)}>
             <div
-              className="py-1 px-2 flex items-center gap-1 cursor-pointer rounded-lg hover:bg-amber-900/10 relative"
+              className="py-1 px-2 flex items-center gap-1 cursor-pointer rounded-lg hover:bg-amber-900/10 relative "
               onClick={() => setShowModify(!showModify)}
             >
-              {session.title}
+              <div className="max-w-3xl overflow-hidden whitespace-nowrap text-ellipsis">
+                {session.title}
+              </div>
               <DownOutlined className="text-sm" />
               <div
                 className={`absolute whitespace-nowrap top-full left-1/2 -translate-x-1/2 translate-y-1 bg-[#e2dbca] flex flex-col items-center border border-amber-600/50 rounded-lg justify-center gap-1 p-1 text-sm
@@ -420,16 +444,27 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             </div>
           </div>
           <div
-            className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white"
+            className={`absolute right-2 top-3  rounded-lg p-2 cursor-pointer  w-8 h-8 flex items-center justify-center text-white
+              ${
+                loading
+                  ? "border-orange-700/80 !p-0"
+                  : "bg-orange-700/60 hover:bg-orange-700/80"
+              }`}
             onClick={sendMessage}
           >
-            <Spin
-              spinning={loading}
-              indicator={<LoadingOutlined spin />}
-              className="w-full h-full"
-            >
-              <ArrowUpOutlined className="w-full h-full" />
-            </Spin>
+            {loading ? (
+              <div
+                onClick={() => {
+                  breakStreamRef.current = true;
+                }}
+              >
+                <HintText hintText="暂停" more={-55}>
+                  <IconProvider.Pause width={24} height={24} fill="#da8d6d" />
+                </HintText>
+              </div>
+            ) : (
+              <ArrowUpOutlined />
+            )}
           </div>
         </div>
       </main>

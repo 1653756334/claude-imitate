@@ -48,7 +48,7 @@ export default function AssistantMsg({ content }: { content: string }) {
         onMouseLeave={() => setShowTools(false)}
       >
         <div className="flex flex-col items-start bg-gradient-to-b from-[#f8f7f5] to-[#f6f6f2] rounded-lg p-2 gap-3 px-3 relative max-w-full border border-white/50">
-          <div className="markdown-content border-slate-400 rounded-lg overflow-hidden break-words text-slate-800">
+          <div className="markdown-content border-slate-400 rounded-lg overflow-hidden break-words text-slate-800 w-full">
             {showMarkdown ? (
               <MarkdownRenderer content={content} />
             ) : (

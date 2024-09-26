@@ -7,6 +7,7 @@ import Corner from "@/assets/svgs/Corner.svg";
 import Drawer from "@/assets/svgs/Drawer.svg";
 import Code from "@/assets/svgs/Code.svg";
 import LoadingTag from "@/assets/svgs/LoadingTag.svg";
+import Pause from "@/assets/svgs/Pause.svg";
 export const IconProvider = {
   AI,
   Chat,
@@ -17,4 +18,5 @@ export const IconProvider = {
   Drawer,
   Code,
   LoadingTag,
+  Pause,
 };

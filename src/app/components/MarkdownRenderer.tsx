@@ -4,6 +4,10 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from "remark-gfm";
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import "katex/dist/katex.css";
 
 interface MarkdownRendererProps {
   content: string;
@@ -21,9 +25,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
     };
 
     return (
-      <div className="markdown-content box-border w-full">
+      <div className="markdown-content box-border w-full max-w-full">
         <ReactMarkdown
           className="p-[0.1rem]"
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeKatex]}
           components={{
             code({ inline, className, children, ...props }: any) {
               const match = /language-(\w+)/.exec(className || "");
@@ -110,6 +116,41 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
             ol({ children }) {
               return <ol className="list-decimal pl-6 my-4">{children}</ol>;
             },
+            p({ children }) {
+              return <div className="my-2">{children}</div>;
+            },
+            table({ children }) {
+              return (
+                <table className="min-w-full border-collapse border border-gray-300 rounded-md overflow-hidden shadow-md">
+                  {children}
+                </table>
+              );
+            },
+            thead({ children }) {
+              return <thead className="bg-gray-200">{children}</thead>;
+            },
+            tbody({ children }) {
+              return <tbody>{children}</tbody>;
+            },
+            tr({ children }) {
+              return (
+                <tr className="hover:bg-gray-100 ">
+                  {children}
+                </tr>
+              );
+            },
+            th({ children }) {
+              return (
+                <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
+                  {children}
+                </th>
+              );
+            },
+            td({ children }) {
+              return (
+                <td className="border border-gray-300 bg-gray-50 px-4 py-2">{children}</td>
+              );
+            },
           }}
         >
           {content}
@@ -119,6 +160,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = React.memo(
   }
 );
 
-MarkdownRenderer.displayName = 'MarkdownRenderer';
+MarkdownRenderer.displayName = "MarkdownRenderer";
 
 export default MarkdownRenderer;
