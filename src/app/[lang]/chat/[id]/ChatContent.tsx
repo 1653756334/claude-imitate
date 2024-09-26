@@ -3,7 +3,6 @@ import {
   ArrowUpOutlined,
   CommentOutlined,
   DownOutlined,
-  LoadingOutlined,
 } from "@ant-design/icons";
 import React, { useRef, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
