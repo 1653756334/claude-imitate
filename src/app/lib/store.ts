@@ -8,7 +8,7 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
       APIKey: "",
       models: [],
       customerModels: [],
-      currentDisplayModel: "gpt-4o-mini",
+      currentDisplayModel: "GPT-4o mini",
       currentModel: "gpt-4o-mini",
       historyNum: 5,
       random: 0.5,
@@ -31,10 +31,11 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
           // 添加customer model 并去重
           newSetting.models = newSetting.models
             .concat(customerModels)
+            .concat(DEFAULT_MODEL_LIST)
             .filter(
               (model, index, self) =>
                 index === self.findIndex((t) => t.value === model.value)
-            );
+            ).sort((a, b) => a.value.localeCompare(b.value));
           localStorage.setItem("setting", JSON.stringify(newSetting));
           return { settings: newSetting };
         });

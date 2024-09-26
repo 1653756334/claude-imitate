@@ -11,12 +11,12 @@ export async function POST(req: NextRequest) {
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
 
-  // console.log(await req.text());
+  const reqJson = await req.json();
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // 使用正确的模型名称
-      messages: [{ role: "user", content: await req.text() }],
+      model: reqJson.model, // 使用正确的模型名称
+      messages: [{ role: "system", content: reqJson.systemPrompt }, ...reqJson.historyMsgList],
       stream: true,
     });
 
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
           }
         }
       } catch (error) {
-        console.error("流处理错误:", error);
+        // console.error("流处理错误:", error);
         await writer.abort();
       }
     })();
@@ -43,11 +43,11 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache, no-transform",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       },
     });
-  } catch (error) {
-    console.error("API 错误:", error);
-    return NextResponse.json({ error: "内部服务器错误" }, { status: 500 });
+  } catch (error: any) {
+    // console.error("API 错误:", error);
+    return NextResponse.json({ msg: error }, { status: 500 });
   }
 }

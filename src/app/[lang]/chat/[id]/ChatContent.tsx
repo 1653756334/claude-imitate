@@ -3,6 +3,7 @@ import {
   ArrowUpOutlined,
   CommentOutlined,
   DownOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 import React, { useRef, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -14,8 +15,13 @@ import Modify from "@/app/components/Modify";
 import DropdownMenu from "@/app/components/DropDown";
 import SelfMessage from "@/app/components/SelfMessage";
 import AssistantMsg from "@/app/components/AssistantMsg";
-import { useSettingStore, useSessionStore } from "@/app/lib/store";
+import {
+  useSettingStore,
+  useSessionStore,
+  useUserStore,
+} from "@/app/lib/store";
 import { throttle } from "@/app/lib/utils";
+import { Spin } from "antd";
 
 export default function ChatContent({ t }: Chat.ChatContentProps) {
   const pathname = usePathname();
@@ -25,8 +31,12 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
   const [curChat, setCurChat] = useState<string>("");
   const [content, setContent] = useState("");
   const [chatList, setChatList] = useState<Global.ChatItem[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const chatListRef = useRef<HTMLDivElement>(null);
   const { settings, saveOneSettingToLocal } = useSettingStore();
+  const { user } = useUserStore();
+
   const {
     setCurMsg,
     curMsg,
@@ -77,7 +87,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     }
     // 说明从上个页面过来，需要发送
     if (curMsg !== "" && hasSentMessage.current) {
-      streamChat(curMsg);
+      streamChat();
       // 标记消息已发送
       hasSentMessage.current = false;
       // 清除 curMsg，防止重复发送
@@ -148,7 +158,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
   const isScrolledToBottom = () => {
     if (chatListRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatListRef.current;
-      return scrollTop + clientHeight >= scrollHeight - 30; // 允许10px的误差
+      return scrollTop + clientHeight >= scrollHeight - 30; // 允许30px的误差
     }
     return false;
   };
@@ -164,19 +174,42 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     }
   };
 
-  const throttleDownToBottom = throttle(downToBottom, 100);
+  const throttleDownToBottom = throttle(downToBottom, 50);
 
-  async function streamChat(message: string) {
+  async function streamChat() {
+    setLoading(true);
+    let historyMsgList: Global.ChatItem[] = [];
+    const systemPrompt = settings.sysPrompt;
+    if (chatList.length > 0) {
+      const historyCnt = settings.historyNum;
+      historyMsgList = chatList.slice(-historyCnt);
+    } else {
+      historyMsgList = getSessionById(session_id)?.messages || [];
+    }
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({
+        model: settings.currentModel,
+        historyMsgList,
+        temperature: settings.random,
+        systemPrompt,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error("网络响应不正常");
+      const res = await response.json();
+      addMessage(session_id, {
+        role: "assistant",
+        content: JSON.stringify(res.msg.error),
+        id: uuid(),
+        createdAt: Date.now(),
+      });
+      downToBottom();
+      setLoading(false);
+      return;
     }
 
     const reader = response.body?.getReader();
@@ -206,6 +239,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             setCurChat("");
             addMessage(session_id, message);
             downToBottom();
+            setLoading(false);
           } else {
             try {
               const parsed = JSON.parse(data);
@@ -221,6 +255,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             } catch (error) {
               console.error("解析JSON时出错:", error);
               setCurChat("");
+              setLoading(false);
             }
           }
         }
@@ -232,22 +267,22 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     if (content.trim() === "") {
       return;
     }
+    const randonId = uuid();
     downToBottom();
     const message = {
       role: "user" as const,
       content,
-      id: uuid(),
+      id: randonId,
       createdAt: Date.now(),
     };
-    setChatList((prev) => [...prev, message]);
     addMessage(session_id, message);
     setContent("");
-    streamChat(content);
+    streamChat();
   };
 
   return (
     <div>
-      <header className=" top-0 z-10 -mb-6 flex h-14 items-center gap-3 pl-11 pr-2 md:pb-0.5 md:pl-6 relative">
+      <header className=" top-0 z-10 -mb-6 flex h-14 items-center gap-3 pl-11 pr-2 md:pb-0.5 md:pl-6 relative w-[80%] mx-auto">
         <div className=" pointer-events-none absolute inset-0 -bottom-7 z-[-1] bg-gradient-to-t from-transparent via-amber-900/5 to-amber-900/10 blur"></div>
         <div className="flex items-center gap-2 mx-auto text-lg text-black/80">
           <div>
@@ -296,9 +331,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                   <SelfMessage
                     key={item.id}
                     content={item.content}
-                    avatar={
-                      "https://avatars.githubusercontent.com/u/103247417?v=4"
-                    }
+                    avatar={user.avatar}
                     onReEdit={() => {
                       setContent(item.content);
                     }}
@@ -315,7 +348,16 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         </div>
         {/* 底部输入框 */}
         <div className="w-full  gap-3 flex flex-col relative z-10 max-w-[800px] mx-auto">
-          <div className="relative p-5 pb-3 pr-12 bg-white rounded-2xl border-2 border-gray-300 border-b-0 rounded-b-none flex flex-col gap-2">
+          <div
+            className="relative p-5 pb-3 pr-12 bg-white rounded-2xl border-2 border-gray-300 border-b-0 rounded-b-none flex flex-col gap-2"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (loading) return;
+                sendMessage();
+              }
+            }}
+          >
             <div className="w-full">
               <textarea
                 ref={textareaRef}
@@ -350,7 +392,9 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white"
             onClick={sendMessage}
           >
-            <ArrowUpOutlined />
+            <Spin spinning={loading} indicator={<LoadingOutlined spin />}>
+              <ArrowUpOutlined />
+            </Spin>
           </div>
         </div>
       </main>
