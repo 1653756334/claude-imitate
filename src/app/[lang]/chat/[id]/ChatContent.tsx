@@ -196,6 +196,8 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         historyMsgList,
         temperature: settings.random,
         systemPrompt,
+        key: settings.APIKey,
+        baseUrl: settings.baseUrl,
       }),
     });
 
