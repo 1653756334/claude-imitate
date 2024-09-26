@@ -3,6 +3,7 @@ import {
   ArrowRightOutlined,
   CloseOutlined,
   DownOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -311,9 +312,9 @@ export default function Slider({ t }: Slider.SlideProps) {
                 </div>
                 {/* 设置 */}
                 <div className="p-1 pl-2 pr-2 flex justify-between items-center">
-                  <span>
-                    <IconProvider.AI />
-                  </span>
+                  <div onClick={() => setShowSetting(true)} className="cursor-pointer rounded-lg hover:bg-orange-200 w-6 h-6 flex items-center justify-center">
+                    <SettingOutlined />
+                  </div>
                   <div className="flex ver">
                     <IconProvider.Problem />
                     <span className="text-xs hover:underline cursor-pointer">

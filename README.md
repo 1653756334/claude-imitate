@@ -4,6 +4,20 @@
 
 本项目模仿 claude 的 ui 和交互，代码块的功能暂时没有实现
 
+### 项目运行
+
+```bash
+pnpm install
+# 开发环境
+pnpm dev
+# 生产环境
+pnpm build
+pnpm start
+```
+
+欢迎各位使用
+
+
 上传文件续自备接口，接口格式满足
 ### 文件上传接口描述
 
@@ -36,9 +50,3 @@ fetch("https://xxxx", requestOptions)
   }
 }
 ```
-
-run 
-```bash
-pnpm dev
-```
-to test this project

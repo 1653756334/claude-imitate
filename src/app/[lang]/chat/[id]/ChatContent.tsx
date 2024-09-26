@@ -206,9 +206,14 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
     if (!response.ok) {
       const res = await response.json();
+      let errMsg = res.msg.error;
+      
+      if(res.code === 400) {
+        errMsg += ", 请在左侧侧边栏设置中进行配置";
+      }
       addMessage(session_id, {
         role: "assistant",
-        content: JSON.stringify(res.msg.error),
+        content: errMsg,
         id: uuid(),
         createdAt: Date.now(),
       });

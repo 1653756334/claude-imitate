@@ -5,11 +5,17 @@ export async function POST(req: NextRequest) {
   try {
     const reqJson = await req.json();
 
-    const api_base = reqJson.baseUrl || process.env.OPENAI_API_BASE || "https://api.openai.com";
+    const api_base =
+      reqJson.baseUrl ||
+      process.env.OPENAI_API_BASE ||
+      "https://api.openai.com";
     const api_key = reqJson.key || process.env.OPENAI_API_KEY;
 
     if (!api_key) {
-      return NextResponse.json({ msg: { error: "api_key is not set" } }, { status: 500 });
+      return NextResponse.json(
+        { msg: { error: "api_key is not set" }, code: 400 },
+        { status: 400 }
+      );
     }
 
     const openai = new OpenAI({
@@ -28,10 +34,12 @@ export async function POST(req: NextRequest) {
 
     const response = completion.choices[0].message.content;
 
-    return NextResponse.json({ msg: response });
-
+    return NextResponse.json({ msg: response, code: 200 });
   } catch (error: any) {
-    return NextResponse.json({ msg: error.message }, { status: 500 });
+    return NextResponse.json(
+      { msg: error.message, code: 500 },
+      { status: 500 }
+    );
   }
 }
 
