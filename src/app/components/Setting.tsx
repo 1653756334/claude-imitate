@@ -1,8 +1,11 @@
-import React from "react";
-import { Slider, InputNumber, Input, Select } from "antd";
+import React, { useState } from "react";
+import { Slider, InputNumber, Input, Select, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
 import { useSettingStore } from "../lib/store";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import MarkdownRenderer from "./MarkdownRenderer";
+import { FILE_POST_URL_DESC } from "../lib/constant";
 
 interface SettingProps {
   t: Global.Dictionary;
@@ -10,6 +13,7 @@ interface SettingProps {
 
 export default function Setting({ t }: SettingProps) {
   const { settings, saveOneSettingToLocal } = useSettingStore();
+  const [open, setOpen] = useState(false);
 
   const handleModelChange = (model: Store.Model) => {
     saveOneSettingToLocal("currentDisplayModel", model.label);
@@ -29,7 +33,9 @@ export default function Setting({ t }: SettingProps) {
             </label>
             <div className="w-1/2 flex items-center">
               <Input
-                onChange={(e) => saveOneSettingToLocal("baseUrl", e.target.value)}
+                onChange={(e) =>
+                  saveOneSettingToLocal("baseUrl", e.target.value)
+                }
                 placeholder="https://api.openai.com/"
                 value={settings.baseUrl}
               />
@@ -44,8 +50,29 @@ export default function Setting({ t }: SettingProps) {
               <Input
                 type="text"
                 value={settings.APIKey}
-                onChange={(e) => saveOneSettingToLocal("APIKey", e.target.value)}
+                onChange={(e) =>
+                  saveOneSettingToLocal("APIKey", e.target.value)
+                }
                 placeholder="sk-xxx"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-1/2 text-sm font-medium text-gray-700 flex items-center gap-2">
+              {t.setting.file_post_url}{" "}
+              <div className="cursor-pointer" onClick={() => setOpen(true)}>
+                <QuestionCircleOutlined />
+              </div>
+            </label>
+            <div className="w-1/2 flex items-center">
+              <Input
+                type="text"
+                value={settings.filePostUrl}
+                onChange={(e) =>
+                  saveOneSettingToLocal("filePostUrl", e.target.value)
+                }
+                placeholder="https://example.com/upload"
               />
             </div>
           </div>
@@ -58,7 +85,12 @@ export default function Setting({ t }: SettingProps) {
               <Input
                 type="text"
                 value={settings.customerModels.join(",")}
-                onChange={(e) => saveOneSettingToLocal("customerModels", e.target.value.split(",").map((model) => model.trim()))}
+                onChange={(e) =>
+                  saveOneSettingToLocal(
+                    "customerModels",
+                    e.target.value.split(",").map((model) => model.trim())
+                  )
+                }
                 placeholder="model1,model2,model3"
               />
             </div>
@@ -68,15 +100,14 @@ export default function Setting({ t }: SettingProps) {
             <label className="w-1/2 text-sm font-medium text-gray-700">
               {t.setting.model}
             </label>
-            <Select 
+            <Select
               defaultValue={settings.currentDisplayModel}
               optionFilterProp="label"
               onChange={(_, option) => handleModelChange(option as Store.Model)}
               options={settings.models}
               showSearch
               style={{ width: "50%" }}
-            >
-            </Select>
+            ></Select>
           </div>
 
           <div className="flex items-center">
@@ -97,7 +128,9 @@ export default function Setting({ t }: SettingProps) {
                 max={20}
                 style={{ margin: "0 16px" }}
                 value={settings.historyNum}
-                onChange={(value) => saveOneSettingToLocal("historyNum", value || 0)}
+                onChange={(value) =>
+                  saveOneSettingToLocal("historyNum", value || 0)
+                }
               />
             </div>
           </div>
@@ -121,7 +154,9 @@ export default function Setting({ t }: SettingProps) {
                 step={0.1}
                 style={{ margin: "0 16px" }}
                 value={settings.random}
-                onChange={(value) => saveOneSettingToLocal("random", value || 0)}
+                onChange={(value) =>
+                  saveOneSettingToLocal("random", value || 0)
+                }
               />
             </div>
           </div>
@@ -133,7 +168,9 @@ export default function Setting({ t }: SettingProps) {
             <div className="w-1/2 flex items-center">
               <TextArea
                 value={settings.sysPrompt}
-                onChange={(e) => saveOneSettingToLocal("sysPrompt", e.target.value)}
+                onChange={(e) =>
+                  saveOneSettingToLocal("sysPrompt", e.target.value)
+                }
                 placeholder={t.setting.system_prompt_placeholder}
                 autoSize={{ minRows: 3, maxRows: 5 }}
                 className="scrollbar"
@@ -142,6 +179,9 @@ export default function Setting({ t }: SettingProps) {
           </div>
         </div>
       </div>
+      <Modal open={open} onCancel={() => setOpen(false)}>
+        <MarkdownRenderer content={FILE_POST_URL_DESC} />
+      </Modal>
     </div>
   );
 }

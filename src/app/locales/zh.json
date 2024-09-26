@@ -62,7 +62,8 @@
     "history_count": "历史记录数量",
     "random": "随机性",
     "system_prompt": "系统提示词",
-    "system_prompt_placeholder": "请输入你的系统提示词"
+    "system_prompt_placeholder": "请输入你的系统提示词",
+    "file_post_url": "文件上传地址"
   },
   "login": {
     "login": "登录",

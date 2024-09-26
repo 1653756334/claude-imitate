@@ -109,6 +109,7 @@ declare namespace Store {
     historyNum: number;
     random: number;
     sysPrompt: string;
+    filePostUrl: string;
   }
   interface SettingState {
     settings: Setting;

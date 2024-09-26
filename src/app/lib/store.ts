@@ -13,6 +13,7 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
       historyNum: 5,
       random: 0.5,
       sysPrompt: "You are a helpful assistant.",
+      filePostUrl: "",
     },
     getSettingFromLocal: () => {
       const setting = localStorage.getItem("setting");

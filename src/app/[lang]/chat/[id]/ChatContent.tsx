@@ -269,6 +269,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                   },
                   body: JSON.stringify({
                     model: "gpt-4o-mini",
+                    key: settings.APIKey,
                     historyMsgList: [
                       ...historyMsgList,
                       {
@@ -367,13 +368,13 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
           </OutsideClickHandler>
         </div>
       </header>
-      <main className="flex-1 flex flex-col px-4  mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5 ">
+      <main className="flex-1 flex flex-col px-4 mx-auto w-full pt-1 h-[calc(100vh-3.3rem)] mt-5 max-md:max-w-[100vw] max-md:px-3">
         {/* 聊天记录 */}
         <div
-          className="flex-1 overflow-y-auto scrollbar flex w-full box-border px-2 my-5"
+          className="flex-1 overflow-y-auto scrollbar flex w-full box-border px-2 max-md:px-0 my-5"
           ref={chatListRef}
         >
-          <div className="max-w-3xl mx-auto flex flex-col gap-5 items-start w-full">
+          <div className="max-w-3xl mx-auto flex flex-col gap-5 items-start w-full max-md:px-5">
             {chatList.map((item) => {
               if (item.role === "user") {
                 return (

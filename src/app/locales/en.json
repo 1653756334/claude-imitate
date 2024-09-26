@@ -62,7 +62,8 @@
     "history_count": "History Count",
     "random": "Random",
     "system_prompt": "System Prompt",
-    "system_prompt_placeholder": "Please enter your system prompt"
+    "system_prompt_placeholder": "Please enter your system prompt",
+    "file_post_url": "File Post Url"
   },
   "login": {
     "login": "Login",

@@ -114,8 +114,16 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         setFileList((prev) => [...prev, file]);
         setSendFileLoading(true);
         try {
+          const filePostUrl = settings.filePostUrl;
+          
+          if (filePostUrl == "") {
+            message.error("请在设置页面先配置文件上传接口");
+            setSendFileLoading(false);
+            setFileList([]);
+            return;
+          }
           const response = await fetch(
-            "https://filesystem.site/api/file/upload/sk-8ngdrP1oppnNeV9lWIb2rCsH3TfvY4MjrGqNWKhAepPZ2iEy",
+            filePostUrl,
             {
               method: "POST",
               body: formData,
