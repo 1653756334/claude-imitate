@@ -21,7 +21,8 @@ import {
   useUserStore,
 } from "@/app/lib/store";
 import { throttle } from "@/app/lib/utils";
-import { Spin } from "antd";
+import { Spin, message as Message } from "antd";
+import { IconProvider } from "@/app/components/IconProvider";
 
 export default function ChatContent({ t }: Chat.ChatContentProps) {
   const pathname = usePathname();
@@ -242,6 +243,29 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             addMessage(session_id, message);
             downToBottom();
             setLoading(false);
+
+            // 生成标题
+            if (chatList.length <= 2) {
+              try {
+                let res = await fetch("/api/chat-out-stream", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    historyMsgList,
+                    systemPrompt:
+                      "你是一个AI助手，请根据用户的问题生成一个标题，大概十个字左右",
+                  }),
+                });
+                let title = await res.json();
+                renameSession(session_id, title.msg);
+              } catch (e) {
+                console.log(e);
+                Message.error("生成标题失败");
+              }
+            }
           } else {
             try {
               const parsed = JSON.parse(data);
@@ -298,7 +322,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
               {session.title}
               <DownOutlined className="text-sm" />
               <div
-                className={`absolute whitespace-nowrap top-full left-1/2 -translate-x-1/2 translate-y-1 bg-amber-600/10 flex flex-col items-center border border-amber-600/50 rounded-lg justify-center gap-1 p-1 text-sm
+                className={`absolute whitespace-nowrap top-full left-1/2 -translate-x-1/2 translate-y-1 bg-[#e2dbca] flex flex-col items-center border border-amber-600/50 rounded-lg justify-center gap-1 p-1 text-sm
                 ${
                   showModify ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
@@ -346,6 +370,11 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             {curChat && curChat.trim() !== "" && (
               <AssistantMsg content={curChat} />
             )}
+            <div
+              style={{ animation: loading ? "spin 1s linear infinite" : "" }}
+            >
+              <IconProvider.LoadingTag fill="#da8d6d" width={28} height={28} />
+            </div>
           </div>
         </div>
         {/* 底部输入框 */}
@@ -394,8 +423,12 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             className="absolute right-2 top-3 bg-orange-700/60 rounded-lg p-2 cursor-pointer hover:bg-orange-700/80 w-8 h-8 flex items-center justify-center text-white"
             onClick={sendMessage}
           >
-            <Spin spinning={loading} indicator={<LoadingOutlined spin />}>
-              <ArrowUpOutlined />
+            <Spin
+              spinning={loading}
+              indicator={<LoadingOutlined spin />}
+              className="w-full h-full"
+            >
+              <ArrowUpOutlined className="w-full h-full" />
             </Spin>
           </div>
         </div>

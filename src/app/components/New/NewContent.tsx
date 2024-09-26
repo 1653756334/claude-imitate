@@ -69,7 +69,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         .join("\n");
     }
     const curSessionId = uuid();
-    addSession(curSessionId, curMsg);
+    addSession(curSessionId, curMsg.slice(0, 50));
     addMessage(curSessionId, {
       role: "user",
       content: curMsg,
@@ -176,7 +176,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
         <div>
           <IconProvider.AI height={32} width={32} fill="#d57858" />
         </div>
-        <h1 className="text-[2.5rem] text-gray-800/70 ">
+        <h1 className="text-[2.5rem] text-gray-800/70 text-center">
           {t.new.welcome} , {user.name}
         </h1>
       </div>

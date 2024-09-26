@@ -5,7 +5,8 @@ import Problem from "@/assets/svgs/Problem.svg";
 import VerticalAlignBottomOutlined from "@/assets/svgs/VerticalAlignBottomOutlined.svg";
 import Corner from "@/assets/svgs/Corner.svg";
 import Drawer from "@/assets/svgs/Drawer.svg";
-
+import Code from "@/assets/svgs/Code.svg";
+import LoadingTag from "@/assets/svgs/LoadingTag.svg";
 export const IconProvider = {
   AI,
   Chat,
@@ -14,4 +15,6 @@ export const IconProvider = {
   VerticalAlignBottomOutlined,
   Corner,
   Drawer,
+  Code,
+  LoadingTag,
 };
