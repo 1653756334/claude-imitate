@@ -252,7 +252,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         id: uuid(),
         createdAt: Date.now(),
       });
-      console.log(res);
+      // console.log(res);
 
       downToBottom();
       setLoading(false);
@@ -310,8 +310,8 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
               const parsed = JSON.parse(data);
               const content = parsed.choices[0].delta.content;
               if (content) {
-                setCurChat((prev) => prev + content);
                 messgae += content;
+                setCurChat((prev) => prev + content);
               }
               // 如果内容滑到了底部，就一直往底下滚动
               if (isScrolledToBottom()) {

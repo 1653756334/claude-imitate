@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     // console.error("API 错误:", error);
-    return NextResponse.json({ msg: { error }, code: 500 }, { status: 500 });
+    return NextResponse.json({ msg: { error: error.error }, code: 500 }, { status: 500 });
   }
 }
 
