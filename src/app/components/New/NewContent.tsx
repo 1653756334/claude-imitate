@@ -49,18 +49,23 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
     }
   };
 
+  const isImg = (filename: string) => {
+    const imgExt = ["png", "jpg", "jpeg", "gif", "bmp", "webp"];
+    const fileExt = filename.split(".").pop();
+    return fileExt && imgExt.includes(fileExt);
+  };
+
   const sendMessageAction = () => {
     if (content.trim() == "") {
       return;
     }
     let curMsg = content;
-    const imgExt = ["png", "jpg", "jpeg", "gif", "bmp", "webp"];
+
     if (fileList.length != 0) {
       curMsg += fileUrlList
         .map((item) => {
           // 找出图片
-          const fileExt = item.filename.split(".").pop();
-          if (fileExt && imgExt.includes(fileExt)) {
+          if (isImg(item.filename)) {
             return `![${item.filename}](${item.url})`;
           } else {
             return `[${item.filename}](${item.url})`;
@@ -109,26 +114,22 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
       }
 
       for (const file of files) {
+        if (file.size > 1024 * 1024 * settings.maxFileSize) {
+          message.error(`${file.name} ${t.new.max_file_size}: ${settings.maxFileSize}MB`);
+          return;
+        }
         const formData = new FormData();
         formData.append("file", file, file.name);
+        formData.append("filePostUrl", settings.filePostUrl);
+        formData.append("secret", settings.secret);
+
         setFileList((prev) => [...prev, file]);
         setSendFileLoading(true);
         try {
-          const filePostUrl = settings.filePostUrl;
-          
-          if (filePostUrl == "") {
-            message.error("请在设置页面先配置文件上传接口");
-            setSendFileLoading(false);
-            setFileList([]);
-            return;
-          }
-          const response = await fetch(
-            filePostUrl,
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+          const response = await fetch("/api/file-server", {
+            method: "POST",
+            body: formData,
+          });
 
           if (response.ok) {
             const result = await response.json();
@@ -138,14 +139,15 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
             ]);
             setSendFileLoading(false);
           } else {
+            const res = await response.json();
             setFileList((prev) => prev.filter((f) => f !== file));
-            console.error("文件上传失败");
-            message.error(`${file.name} 上传失败`);
+            console.log("文件上传失败", res);
+            message.error(`${file.name} ${t.new.upload_file_error}, ${res.msg.error}`);
             setSendFileLoading(false);
           }
         } catch (error) {
           console.error("上传错误:", error);
-          message.error(`${file.name} 上传出错`);
+          message.error(`${file.name} ${t.new.upload_file_error}`);
           setFileList((prev) => prev.filter((f) => f !== file));
           setSendFileLoading(false);
         }
@@ -253,7 +255,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
             </HintText>
           </div>
           <div className="p-2 pt-0 grid grid-cols-5 relative scrollbar pb-3 gap-3">
-            {fileList.map((file) => {
+            {fileList.map((file, index) => {
               const fullFilename = file.name;
               const fileExt = fullFilename.split(".").pop();
               const fileName = fullFilename.split(".").slice(0, -1).join(".");
@@ -261,7 +263,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
                 <div key={fullFilename} className="flex-shrink-0">
                   <HintText hintText={fullFilename} more={5}>
                     <Spin
-                      spinning={sendFileLoading}
+                      spinning={sendFileLoading && index === fileList.length - 1}
                       indicator={<LoadingOutlined spin />}
                     >
                       <div
@@ -272,9 +274,13 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
                             "linear-gradient(to bottom, white, #e6f7ff)",
                         }}
                       >
-                        <div className="font-bold text-blue-500/80 truncate -translate-y-1">
-                          {fileName}
-                        </div>
+                        {isImg(fullFilename) && !(sendFileLoading && index == fileList.length - 1) ? (
+                          <img src={fileUrlList[index].url} alt={fileName} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="font-bold text-blue-500/80 truncate -translate-y-1">
+                            {fileName}
+                          </div>
+                        )}
                         <div
                           className={`absolute -bottom-2 bg-blue-500/90 drop-shadow-lg shadow-blue-400 h-5 rounded-lg px-3 py-1
 											 text-white justify-center items-center flex font-bold text-xs`}
@@ -359,7 +365,7 @@ export default function NewContent({ t }: { t: Global.Dictionary }) {
                   <div className="mt-2 text-sm font-medium truncate">
                     {item.title}
                   </div>
-                  <div className="mt-2 text-xs text-gray-500">时间</div>
+                  <div className="mt-2 text-xs text-gray-500">{new Date(item.createdAt).toLocaleString()}</div>
                 </div>
               </Link>
             ))}

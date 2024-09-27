@@ -5,13 +5,21 @@ export async function POST(req: NextRequest) {
   try {
     const reqJson = await req.json();
 
-    const api_base =
-      reqJson.baseUrl ||
-      process.env.OPENAI_API_BASE ||
-      "https://api.openai.com";
-    const api_key = reqJson.key || process.env.OPENAI_API_KEY;
+    let api_base;
+    let api_key;
 
-    if (!api_key) {
+    if (reqJson.secret && reqJson.secret == process.env.SECRET_KEY) {
+      api_base =
+        reqJson.baseUrl ||
+        process.env.OPENAI_API_BASE ||
+        "https://api.openai.com";
+      api_key = reqJson.key || process.env.OPENAI_API_KEY;
+    } else {
+      api_base = reqJson.baseUrl || "https://api.openai.com";
+      api_key = reqJson.key || "";
+    }
+
+    if (api_key == "") {
       return NextResponse.json(
         { msg: { error: "api_key is not set" }, code: 400 },
         { status: 400 }

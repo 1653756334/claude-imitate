@@ -24,7 +24,8 @@
     "multi_select": "多选",
     "select_all": "全选",
     "select_chat": "个对话已选择",
-    "delete_selected": "删除选中"
+    "delete_selected": "删除选中",
+    "no_data": "暂无数据"
   },
   "confirm": {
     "yes": "确定",
@@ -38,32 +39,46 @@
     "using": "使用免费计划",
     "upgrade": "升级",
     "placeholder": "请输入你的需求",
-    "file_desc": "使用文档、图片等",
+    "file_desc": "使用文档、图片等(需配置文件上传接口)",
     "file_added": "个文件已添加",
     "upload_desc": "上传文件或者图片",
     "upload_file": "上传文件",
     "recent_chat": "最近对话",
     "expand": "展开",
-    "show_all": "查看所有"
+    "show_all": "查看所有",
+    "max_file_size": "文件大小超过限制",
+    "upload_file_error": "上传失败"
   },
   "chat": {
     "delete_title": "确定要删除吗？",
     "delete_content": "删除后将无法恢复",
     "rename_title": "重命名对话",
     "rename": "重命名",
-    "delete": "删除"
+    "delete": "删除",
+    "generate_title": "你是一个AI助手，请根据用户的问题生成一个标题，只需要十个字左右",
+    "error_hint": "请在左侧侧边栏设置中->高级配置进行配置apikey或检查密钥配置是否正确",
+    "generate_title_failed": "生成标题失败",
+    "pause": "暂停"
   },
   "setting": {
     "title": "设置",
     "api_endpoint": "API 端点",
-    "api_key": "API 密钥",
+    "api_key": "API KEY",
     "custom_model": "自定义模型",
     "model": "模型",
     "history_count": "历史记录数量",
     "random": "随机性",
     "system_prompt": "系统提示词",
     "system_prompt_placeholder": "请输入你的系统提示词",
-    "file_post_url": "文件上传地址"
+    "file_post_url": "文件上传地址",
+    "secret": "密钥",
+    "common": "通用",
+    "deep": "高级",
+    "user": "用户",
+    "image_size_limit": "图片大小不能超过2M",
+    "email": "邮箱",
+    "avatar": "头像",
+    "nickname": "昵称"
   },
   "login": {
     "login": "登录",

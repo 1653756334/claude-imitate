@@ -1,81 +1,21 @@
-import React, { useState } from "react";
-import { Slider, InputNumber, Input, Select, Modal } from "antd";
+import React from "react";
+import { Slider, InputNumber, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 
-import { useSettingStore } from "../lib/store";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import MarkdownRenderer from "./MarkdownRenderer";
-import { FILE_POST_URL_DESC } from "../lib/constant";
+import { useSettingStore } from "../../lib/store";
 
-interface SettingProps {
-  t: Global.Dictionary;
-}
-
-export default function Setting({ t }: SettingProps) {
+export default function Common({ t }: { t: Global.Dictionary }) {
   const { settings, saveOneSettingToLocal } = useSettingStore();
-  const [open, setOpen] = useState(false);
 
   const handleModelChange = (model: Store.Model) => {
     saveOneSettingToLocal("currentDisplayModel", model.label);
     saveOneSettingToLocal("currentModel", model.value);
   };
-
   return (
-    <div className="bg-white shadow-md rounded-lg md:w-[500px] max-md:w-[95vw] mx-auto text-gray-700">
-      <div className="flex justify-between items-center px-6 py-4 border-b">
-        <h2 className="text-xl font-semibold">{t.setting.title}</h2>
-      </div>
+    <>
       <div className="p-6">
         <div className="space-y-4">
-          <div className="flex items-center">
-            <label className="w-1/2 text-sm font-medium text-gray-700">
-              {t.setting.api_endpoint}
-            </label>
-            <div className="w-1/2 flex items-center">
-              <Input
-                onChange={(e) =>
-                  saveOneSettingToLocal("baseUrl", e.target.value)
-                }
-                placeholder="https://api.openai.com/"
-                value={settings.baseUrl}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-1/2 text-sm font-medium text-gray-700">
-              {t.setting.api_key}
-            </label>
-            <div className="w-1/2 flex items-center">
-              <Input
-                type="text"
-                value={settings.APIKey}
-                onChange={(e) =>
-                  saveOneSettingToLocal("APIKey", e.target.value)
-                }
-                placeholder="sk-xxx"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-1/2 text-sm font-medium text-gray-700 flex items-center gap-2">
-              {t.setting.file_post_url}{" "}
-              <div className="cursor-pointer" onClick={() => setOpen(true)}>
-                <QuestionCircleOutlined />
-              </div>
-            </label>
-            <div className="w-1/2 flex items-center">
-              <Input
-                type="text"
-                value={settings.filePostUrl}
-                onChange={(e) =>
-                  saveOneSettingToLocal("filePostUrl", e.target.value)
-                }
-                placeholder="https://example.com/upload"
-              />
-            </div>
-          </div>
+          
 
           <div className="flex items-center">
             <label className="w-1/2 text-sm font-medium text-gray-700">
@@ -179,9 +119,6 @@ export default function Setting({ t }: SettingProps) {
           </div>
         </div>
       </div>
-      <Modal open={open} onCancel={() => setOpen(false)}>
-        <MarkdownRenderer content={FILE_POST_URL_DESC} />
-      </Modal>
-    </div>
+    </>
   );
 }

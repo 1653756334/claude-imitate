@@ -24,7 +24,8 @@
     "multi_select": "Multi-select",
     "select_all": "Select All",
     "select_chat": "selected chats",
-    "delete_selected": "Delete Selected"
+    "delete_selected": "Delete Selected",
+    "no_data": "No data"
   },
   "confirm": {
     "yes": "Confirm",
@@ -38,20 +39,26 @@
     "using": "Using limited free plan",
     "upgrade": "Upgrade",
     "placeholder": "Please enter your requirements",
-    "file_desc": "using documents, images, and more",
+    "file_desc": "using documents, images, and more, (Need to configure the file upload interface)",
     "file_added": "files added",
     "upload_desc": "Upload files or images",
     "upload_file": "Upload File",
     "recent_chat": "Recent Chat",
     "expand": "Expand",
-    "show_all": "Show All"
+    "show_all": "Show All",
+    "max_file_size": "File size exceeds the limit",
+    "upload_file_error": "Upload failed"
   },
   "chat": {
     "delete_title": "Confirm delete this chat?",
     "delete_content": "Delete this chat will not be able to restore",
     "rename_title": "Rename Chat",
     "rename": "Rename",
-    "delete": "Delete"
+    "delete": "Delete",
+    "generate_title": "You are an AI assistant. Please generate a title based on the user's question. It only takes about ten words.",
+    "error_hint": "Please configure the API key or check if the key configuration is correct in the advanced configuration in the left sidebar settings.",
+    "generate_title_failed": "Generate title failed",
+    "pause": "Pause"
   },
   "setting": {
     "title": "Settings",
@@ -63,7 +70,15 @@
     "random": "Random",
     "system_prompt": "System Prompt",
     "system_prompt_placeholder": "Please enter your system prompt",
-    "file_post_url": "File Post Url"
+    "file_post_url": "File Post Url",
+    "secret": "Secret",
+    "common": "Common",
+    "deep": "Premium",
+    "user": "User",
+    "image_size_limit": "Image size cannot exceed 2M",
+    "email": "Email",
+    "avatar": "Avatar",
+    "nickname": "Nickname"
   },
   "login": {
     "login": "Login",

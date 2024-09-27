@@ -15,7 +15,7 @@ import { debounce } from "@/app/lib/utils";
 
 export default function RecentsContent({ t }: Recents.RecentsContentProps) {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [historyData, setHistoryData] = useState<Slider.HistoryData[]>([]);
+  const [historyData, setHistoryData] = useState<Store.Session[]>([]);
   const [comfirmVisible, setComfirmVisible] = useState(false);
   const [deleteSessionId, setDeleteSessionId] = useState<string | null>(null);
 
@@ -170,8 +170,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                         {item.title}
                       </div>
                       <div className="text-xs gap-2 flex items-center">
-                        <span className="scale-95">上一条记录</span>
-                        <span>17小时前</span>
+                        <span>{new Date(item.createdAt).toLocaleString()}</span>
                       </div>
                     </div>
                   </Link>
@@ -200,7 +199,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                     className={`absolute top-1 right-2 group-hover:opacity-100 transition-opacity duration-200 opacity-0 cursor-pointer hover:text-red-500 ${
                       selectedItems.length == 0 ? "" : "opacity-0"
                     }`}
-                    title="删除"
+                    title={t.confirm.delete}
                     onClick={() => {
                       setComfirmVisible(true);
                       setDeleteSessionId(item.id);
@@ -211,7 +210,7 @@ export default function RecentsContent({ t }: Recents.RecentsContentProps) {
                 </li>
               ))
             ) : (
-              <div>暂无数据</div>
+              <div className="text-center">{t.recents.no_data}</div>
             )}
           </ul>
         </div>

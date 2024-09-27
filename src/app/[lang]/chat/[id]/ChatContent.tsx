@@ -45,7 +45,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
     addMessage,
     deleteSession,
     renameSession,
-    deleteMessage
+    deleteMessage,
   } = useSessionStore();
 
   const router = useRouter();
@@ -178,6 +178,40 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
   const throttleDownToBottom = throttle(downToBottom, 50);
 
+  async function genTitle(historyMsgList: Global.ChatItem[]) {
+    try {
+      const res = await fetch("/api/chat-out-stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          key: settings.APIKey,
+          secret: settings.secret,
+          historyMsgList: [
+            ...historyMsgList,
+            {
+              role: "user",
+              content: t.chat.generate_title,
+            },
+          ],
+          systemPrompt: t.chat.generate_title,
+          baseUrl: settings.baseUrl,
+        }),
+      });
+      if (res.ok) {
+        const title = await res.json();
+        renameSession(session_id, title.msg.toString());
+      } else {
+        Message.error(t.chat.generate_title_failed);
+      }
+    } catch (e) {
+      console.log(e);
+      Message.error(t.chat.generate_title_failed);
+    }
+  }
+
   async function streamChat(message?: Global.ChatItem) {
     setLoading(true);
     breakStreamRef.current = false;
@@ -201,15 +235,16 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         systemPrompt,
         key: settings.APIKey,
         baseUrl: settings.baseUrl,
+        secret: settings.secret,
       }),
     });
 
     if (!response.ok) {
       const res = await response.json();
-      let errMsg = res.msg.error;
-      
-      if(res.code === 400) {
-        errMsg += ", 请在左侧侧边栏设置中进行配置";
+      let errMsg = JSON.stringify(res.msg.error);
+
+      if (res.code === 400) {
+        errMsg += ", " + t.chat.error_hint;
       }
       addMessage(session_id, {
         role: "assistant",
@@ -217,6 +252,8 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         id: uuid(),
         createdAt: Date.now(),
       });
+      console.log(res);
+
       downToBottom();
       setLoading(false);
       return;
@@ -232,7 +269,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         setLoading(false);
         breakStreamRef.current = false;
         setCurChat("");
-        if (message) { 
+        if (message) {
           deleteMessage(session_id, message.id);
         } else {
           deleteSession(session_id);
@@ -264,35 +301,9 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
             addMessage(session_id, message);
             downToBottom();
             setLoading(false);
-            // 生成标题
+            // 第一次发送信息生成标题
             if (chatList.length <= 2) {
-              try {
-                const res = await fetch("/api/chat-out-stream", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    model: "gpt-4o-mini",
-                    key: settings.APIKey,
-                    historyMsgList: [
-                      ...historyMsgList,
-                      {
-                        role: "user",
-                        content:
-                          "你是一个AI助手，请根据用户的问题生成一个标题，只需要十个字左右",
-                      },
-                    ],
-                    systemPrompt:
-                      "你是一个AI助手，请根据用户的问题生成一个标题，只需要十个字左右",
-                  }),
-                });
-                const title = await res.json();
-                renameSession(session_id, title.msg);
-              } catch (e) {
-                console.log(e);
-                Message.error("生成标题失败");
-              }
+              genTitle(historyMsgList);
             }
           } else {
             try {
@@ -463,7 +474,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
                   breakStreamRef.current = true;
                 }}
               >
-                <HintText hintText="暂停" more={-55}>
+                <HintText hintText={t.chat.pause} more={-55}>
                   <IconProvider.Pause width={24} height={24} fill="#da8d6d" />
                 </HintText>
               </div>

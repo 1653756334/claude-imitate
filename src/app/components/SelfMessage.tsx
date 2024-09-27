@@ -22,7 +22,7 @@ export default function SelfMessage({
             alt="avatar"
             width={32} // 对应于 w-6（6 * 4 = 24px）
             height={32} // 对应于 h-6
-            className="rounded-full flex-shrink-0 "
+            className="rounded-full flex-shrink-0 object-cover w-8 h-8"
           />
           <div className="markdown-content border-slate-400 rounded-lg overflow-hidden break-words w-full">
             <MarkdownRenderer content={content} />

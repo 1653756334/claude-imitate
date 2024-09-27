@@ -14,6 +14,8 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
       random: 0.5,
       sysPrompt: "You are a helpful assistant.",
       filePostUrl: "",
+      secret: "",
+      maxFileSize: 10,
     },
     getSettingFromLocal: () => {
       const setting = localStorage.getItem("setting");
@@ -36,7 +38,8 @@ export const useSettingStore = create<Store.SettingState & Store.SettingAction>(
             .filter(
               (model, index, self) =>
                 index === self.findIndex((t) => t.value === model.value)
-            ).sort((a, b) => a.value.localeCompare(b.value));
+            )
+            .sort((a, b) => a.value.localeCompare(b.value));
           localStorage.setItem("setting", JSON.stringify(newSetting));
           return { settings: newSetting };
         });
@@ -81,13 +84,23 @@ export const useUserStore = create<Store.UserState & Store.UserAction>(
   (set) => ({
     user: {
       email: "bashirian76100@gmail.com",
-      avatar: "https://avatars.githubusercontent.com/u/71807854?s=48&v=4",
+      avatar: "https://avatars.githubusercontent.com/u/71807854?s=8100&v=4",
       name: "ClaudeImitate",
     },
 
     setUserToLocal: (user: Store.User) => {
       localStorage.setItem("user", JSON.stringify(user));
       set((state) => ({ user: { ...state.user, ...user } }));
+    },
+    setOneUserInfoToLocal: (
+      key: keyof Store.User,
+      value: Store.User[keyof Store.User]
+    ) => {
+      set((state) => {
+        const newUser = { ...state.user, [key]: value };
+        localStorage.setItem("user", JSON.stringify(newUser));
+        return { user: newUser };
+      });
     },
     getUserFromLocal: () => {
       const user = localStorage.getItem("user");
@@ -104,12 +117,16 @@ export const useSessionStore = create<Store.SessionState & Store.SessionAction>(
     curMsg: "",
     getReversedChatData: () => {
       const chatData = get().chatData;
-      const reversedChatData = chatData.sort((a, b) => b.createdAt - a.createdAt);
+      const reversedChatData = chatData.sort(
+        (a, b) => b.createdAt - a.createdAt
+      );
       return reversedChatData;
     },
     addMessage: (sessionId: string, message: Global.ChatItem) =>
       set((state) => {
-        const session = state.chatData.find((session) => session.id === sessionId);
+        const session = state.chatData.find(
+          (session) => session.id === sessionId
+        );
         if (session) {
           session.messages.push(message);
         }

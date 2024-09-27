@@ -3,6 +3,7 @@ import {
   ArrowRightOutlined,
   CloseOutlined,
   DownOutlined,
+  GithubOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import { usePathname } from "next/navigation";
@@ -12,7 +13,7 @@ import { Jacques_Francois } from "next/font/google";
 import React, { useState, useEffect, useRef } from "react";
 import { IconProvider } from "../IconProvider";
 import Modal from "../Modal";
-import Setting from "../Setting";
+import Setting from "../settings/Setting";
 import OutsideClickHandler from "../OutsideClickHandler";
 import {
   useSessionStore,
@@ -42,7 +43,8 @@ export default function Slider({ t }: Slider.SlideProps) {
 
   const { user, getUserFromLocal } = useUserStore();
   const { getSettingFromLocal } = useSettingStore();
-  const { chatData, getSessionFromLocal, getReversedChatData } = useSessionStore();
+  const { chatData, getSessionFromLocal, getReversedChatData } =
+    useSessionStore();
 
   const popoverSetting = [
     {
@@ -225,18 +227,20 @@ export default function Slider({ t }: Slider.SlideProps) {
                     </div>
                   )}
                   {chatData &&
-                    getReversedChatData().slice(0, 10).map((item) => {
-                      return (
-                        <Link href={`/chat/${item.id}`} key={item.id}>
-                          <div className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group">
-                            <IconProvider.Chat width={20} height={20} />
-                            <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
-                              {item.title}
-                            </span>
-                          </div>
-                        </Link>
-                      );
-                    })}
+                    getReversedChatData()
+                      .slice(0, 10)
+                      .map((item) => {
+                        return (
+                          <Link href={`/chat/${item.id}`} key={item.id}>
+                            <div className="hover:bg-amber-800/10 rounded-md p-1 cursor-pointer flex items-center relative group">
+                              <IconProvider.Chat width={20} height={20} />
+                              <span className="text-ellipsis overflow-hidden whitespace-nowrap ml-1 mr-1 flex-1">
+                                {item.title}
+                              </span>
+                            </div>
+                          </Link>
+                        );
+                      })}
                   {/* 查看所有 */}
                   {chatData.length > 10 && (
                     <Link href={"/recents"} className="gap-1 mt-3">
@@ -312,14 +316,16 @@ export default function Slider({ t }: Slider.SlideProps) {
                 </div>
                 {/* 设置 */}
                 <div className="p-1 pl-2 pr-2 flex justify-between items-center">
-                  <div onClick={() => setShowSetting(true)} className="cursor-pointer rounded-lg hover:bg-orange-200 w-6 h-6 flex items-center justify-center">
+                  <div
+                    onClick={() => setShowSetting(true)}
+                    className="cursor-pointer rounded-lg hover:bg-orange-200 w-6 h-6 flex items-center justify-center"
+                  >
                     <SettingOutlined />
                   </div>
-                  <div className="flex ver">
-                    <IconProvider.Problem />
-                    <span className="text-xs hover:underline cursor-pointer">
-                      {t.slider.help}
-                    </span>
+                  <div className="cursor-pointer rounded-lg hover:bg-orange-200 w-6 h-6 flex items-center justify-center">
+                    <Link href="https://github.com/1653756334/claude-imitate" target="_blank">
+                      <GithubOutlined />
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { match } from "@formatjs/intl-localematcher";
-import Negotiator from 'negotiator';
+import Negotiator from "negotiator";
 
 const locales = ["en", "zh"];
 const defaultLocale = "zh";
 
 // Get the preferred locale, similar to the above or using a library
 function getLocale(request: NextRequest) {
+
   const acceptLang = request.headers.get("Accept-Language");
   if (!acceptLang) return defaultLocale;
   const headers = { "accept-language": acceptLang };
@@ -36,7 +37,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip all internal paths (_next)
-    "/((?!api|_next|favicon.ico).*)",
+    "/((?!api|_next|favicon.*).*)",
     // Optional: only run on root (/) URL
     // '/'
   ],

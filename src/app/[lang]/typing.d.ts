@@ -110,6 +110,8 @@ declare namespace Store {
     random: number;
     sysPrompt: string;
     filePostUrl: string;
+    secret: string;
+    maxFileSize: number;
   }
   interface SettingState {
     settings: Setting;
@@ -131,6 +133,7 @@ declare namespace Store {
   interface UserAction {
     setUserToLocal: (user: User) => void;
     getUserFromLocal: () => void;
+    setOneUserInfoToLocal: <K extends keyof User>(key: K, value: User[K]) => void;
   }
 
   interface Session {
