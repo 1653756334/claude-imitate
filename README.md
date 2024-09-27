@@ -10,6 +10,8 @@
 
 ### 项目运行
 
+环境变量需要自己配置，配置文件在 .env.local.example 中，复制一份改名为 .env.local 即可
+
 ```bash
 pnpm install
 # 开发环境

@@ -1,4 +1,0 @@
-BASE_HOST=http://localhost:8080
-OPENAI_API_BASE=https://api.wlai.vip
-OPENAI_API_KEY=sk-1ZIqo4uEp2nUyXyLF58a2eA1199c4f8d882fBb2382819d8e
-FILE_UPLOAD_URL=https://filesystem.site/api/file/upload/sk-8ngdrP1oppnNeV9lWIb2rCsH3TfvY4MjrGqNWKhAepPZ2iEy
