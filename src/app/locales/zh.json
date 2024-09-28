@@ -47,7 +47,9 @@
     "expand": "展开",
     "show_all": "查看所有",
     "max_file_size": "文件大小超过限制",
-    "upload_file_error": "上传失败"
+    "upload_file_error": "上传失败",
+    "drop_files_here": "拖拽文件到这里",
+    "release_to_upload": "释放上传"
   },
   "chat": {
     "delete_title": "确定要删除吗？",

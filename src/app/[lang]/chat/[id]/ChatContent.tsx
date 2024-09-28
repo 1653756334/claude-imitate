@@ -261,7 +261,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
 
     const reader = response.body?.getReader();
     const decoder = new TextDecoder();
-    let messgae = "";
+    let messgae_slice = "";
 
     while (true) {
       if (breakStreamRef.current) {
@@ -269,6 +269,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
         setLoading(false);
         breakStreamRef.current = false;
         setCurChat("");
+        // 停止的时候删除消息，只有一条消息就删除会话
         if (message) {
           deleteMessage(session_id, message.id);
         } else {
@@ -291,14 +292,14 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
           const data = line.replace("data: ", "");
           if (data === "[DONE]") {
             // 流结束
-            const message = {
+            const all_message = {
               role: "assistant" as const,
-              content: messgae,
+              content: messgae_slice,
               id: uuid(),
               createdAt: Date.now(),
             };
             setCurChat("");
-            addMessage(session_id, message);
+            addMessage(session_id, all_message);
             downToBottom();
             setLoading(false);
             // 第一次发送信息生成标题
@@ -310,8 +311,9 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
               const parsed = JSON.parse(data);
               const content = parsed.choices[0].delta.content;
               if (content) {
-                messgae += content;
-                setCurChat((prev) => prev + content);
+                messgae_slice += content;
+                // 节流
+                throttle(setCurChat, 1000 / 60)(messgae_slice);
               }
               // 如果内容滑到了底部，就一直往底下滚动
               if (isScrolledToBottom()) {
