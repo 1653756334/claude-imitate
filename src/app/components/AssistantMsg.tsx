@@ -3,12 +3,30 @@ import MarkdownRenderer from "./MarkdownRenderer";
 import HintText from "./HintText";
 import { IconProvider } from "./IconProvider";
 import { Tag } from "antd";
-import { CheckOutlined, CopyOutlined } from "@ant-design/icons";
+import { CheckOutlined, CopyOutlined, FullscreenOutlined } from "@ant-design/icons";
+import ArtifactRenderer from "./ArtifactRenderer";
 
 export default function AssistantMsg({ content }: { content: string }) {
   const [showMarkdown, setShowMarkdown] = useState(true);
   const [showTools, setShowTools] = useState(false);
   const [copyIcon, setCopyIcon] = useState(<CopyOutlined className="h-5" />);
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [codeModalContent, setCodeModalContent] = useState({ code: '', language: '', title: '' });
+
+  // 提取长代码块用于全屏展示
+  const hasLongCode = React.useMemo(() => {
+    // 检查是否包含超过30行的代码块
+    const codeBlockRegex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g;
+    let match;
+    while ((match = codeBlockRegex.exec(content)) !== null) {
+      const code = match[2];
+      if (code.split('\n').length > 30) {
+        return true;
+      }
+    }
+    return false;
+  }, [content]);
+
   const toolsList = [
     {
       name: showMarkdown ? "显示原文" : "显示转义",
@@ -38,6 +56,33 @@ export default function AssistantMsg({ content }: { content: string }) {
           .catch(() => {});
       },
     },
+    // 当存在长代码块时，显示"查看完整代码"按钮
+    ...hasLongCode ? [{
+      name: "查看完整代码",
+      icon: (
+        <Tag className="!mr-0 !justify-center !items-center">
+          <FullscreenOutlined />
+        </Tag>
+      ),
+      onClick: () => {
+        // 提取第一个长代码块
+        const codeBlockRegex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g;
+        let match;
+        while ((match = codeBlockRegex.exec(content)) !== null) {
+          const language = match[1] || 'text';
+          const code = match[2];
+          if (code.split('\n').length > 30) {
+            setCodeModalContent({
+              code,
+              language,
+              title: `完整代码 (${language})`
+            });
+            setShowCodeModal(true);
+            break;
+          }
+        }
+      },
+    }] : [],
   ];
 
   return (
@@ -72,6 +117,31 @@ export default function AssistantMsg({ content }: { content: string }) {
           </div>
         </div>
       </div>
+
+      {/* 代码全屏模态框 */}
+      {showCodeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h3 className="text-lg font-medium">{codeModalContent.title}</h3>
+              <button 
+                onClick={() => setShowCodeModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-2">
+              <ArtifactRenderer
+                content={codeModalContent.code}
+                language={codeModalContent.language}
+                title={codeModalContent.title}
+                canPreview={codeModalContent.language === 'html' || codeModalContent.language === 'xml'}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -254,7 +254,7 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
       });
       // console.log(res);
 
-      downToBottom();
+      // downToBottom();
       setLoading(false);
       return;
     }
@@ -349,16 +349,15 @@ export default function ChatContent({ t }: Chat.ChatContentProps) {
   return (
     <div>
       <header className=" top-0 z-10 -mb-6 flex h-14 items-center gap-3 pl-11 pr-2 md:pb-0.5 md:pl-6 relative w-[80%] mx-auto">
-        <div className=" pointer-events-none absolute inset-0 -bottom-7 z-[-1] bg-gradient-to-t from-transparent via-amber-900/5 to-amber-900/10 blur"></div>
         <div className="flex items-center gap-2 mx-auto text-lg text-black/80">
-          <div>
-            <CommentOutlined />
-          </div>
           <OutsideClickHandler onOutsideClick={() => setShowModify(false)}>
             <div
-              className="py-1 px-2 flex items-center gap-1 cursor-pointer rounded-lg hover:bg-amber-900/10 relative "
+              className="py-1 px-2 flex items-center gap-2 cursor-pointer rounded-lg hover:bg-amber-600/10 relative "
               onClick={() => setShowModify(!showModify)}
             >
+              <div>
+                <CommentOutlined />
+              </div>
               <div className="max-w-3xl overflow-hidden whitespace-nowrap text-ellipsis">
                 {session.title}
               </div>

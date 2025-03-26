@@ -35,11 +35,13 @@ export async function POST(req: NextRequest) {
     const writer = stream.writable.getWriter();
 
     const completion = await openai.chat.completions.create({
-      model: reqJson.model, // 使用正确的模型名称
+      model: reqJson.model,
       messages: [
         { role: "system", content: reqJson.systemPrompt },
         ...reqJson.historyMsgList,
       ],
+      functions: reqJson.functions || undefined,
+      function_call: reqJson.function_call || undefined,
       stream: true,
     });
 
